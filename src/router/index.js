@@ -1,25 +1,72 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
+import HomeView from "@/views/HomeView";
+import InicioView from "@/views/InicioView";
+import ContasView from "@/views/contas/ContasView";
+import ContaForm from "@/views/contas/ContaFormView";
+import store from "@/store";
+import {checkValidToken} from "@/service/http/authService";
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'login',
+    component: LoginView
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
+    path: '/app',
+    name: 'home',
+    component: HomeView,
+    redirect: 'app/dashboard',
+    children : [
+      {
+        path: '/app/dashboard',
+        name: 'dashboard',
+        component: InicioView
+      },
+      {
+        path: '/app/contas',
+        name: 'contas',
+        component: ContasView
+      },
+      {
+        path: '/app/contas/new',
+        name: 'contas-form',
+        component: ContaForm
+      },
+      {
+        path: '/app/contas/edit/:id',
+        name: 'contas-form-edit',
+        component: ContaForm
+      },
+    ]
+  },
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
+  linkActiveClass: "active"
 })
+
+router.beforeEach((to, from) => {
+    if(to.name != 'login') {
+       let user = store.getters.userData;
+
+       if(!store.getters.isAuth) {
+          return router.push({name: "login"})
+       }
+
+       if(user.token === "" || !user.hasOwnProperty("token")) {
+         return router.push({name: "login"})
+
+       }
+
+      checkValidToken(user.token).then(result => {}).catch(error => {
+         store.commit("clearState")
+         return router.push({name: "login"})
+      })
+    }
+});
 
 export default router
