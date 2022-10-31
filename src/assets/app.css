@@ -84,3 +84,15 @@ body {
     color:#fff!important;
     background: #4B49ACFF;
 }
+
+.show-per-page {
+    display: flex;
+    justify-content: flex-end;
+    width:100%;
+}
+
+.show-pages {
+    width: 100px;
+    text-align: center;
+    margin-right: 20px;
+}

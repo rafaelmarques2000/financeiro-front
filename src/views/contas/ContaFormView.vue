@@ -17,11 +17,9 @@
 
                                   <div class="mb-3">
                                     <label for="accounttype" class="form-label">Tipo de conta</label>
-                                    <select class="form-select" v-model="data.account.accountTypeId" aria-label="Default select example">
-                                      <option selected>Selecione um tipo de conta</option>
-                                      <option value="1">One</option>
-                                      <option value="2">Two</option>
-                                      <option value="3">Three</option>
+                                    <select class="form-select" v-model="data.account.account_type_id" aria-label="Default select example">
+                                      <option value="">Selecione um tipo de conta</option>
+                                      <option v-for="item in data.accountTypes" :value="item.id">{{item.description}}</option>
                                     </select>
                                   </div>
                                   <div class="mb-3">
@@ -43,6 +41,9 @@ import {onMounted, reactive} from "vue";
 import PageTitle from "@/components/PageTitle";
 import { useRoute, useRouter } from 'vue-router'
 import Swal from "sweetalert2";
+import {listAccountTypes} from "@/service/http/accountTypeService"
+import {saveAccount} from "@/service/http/accountService"
+import store from "@/store"
 
 export default {
     components: {PageTitle},
@@ -54,9 +55,10 @@ export default {
       const data = reactive({
           pageTitle: "",
           subtitle: "",
+          accountTypes: [],
           account: {
              description: "",
-             accountTypeId: ""
+             account_type_id: ""
           }
       })
 
@@ -70,38 +72,25 @@ export default {
              return
           }
 
-        if(!data.account.accountTypeId) {
+        if(!data.account.account_type_id) {
           Swal.fire("Atenção", "Selecione um tipo de conta", "warning", "")
           return
         }
 
-        Swal.fire({
-          title:"",
-          text:"Processando aguarde....",
-          icon: "",
-          buttons: false,
-          closeOnClickOutside: false,
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          showConfirmButton: false
-        });
-
-
-        window.setTimeout(() => {
-          Swal.fire("Conta cadastra com sucesso.", "", "success", "")
-          router.push({name: "contas"})
-        },3000)
-
+        saveAccount(store.getters.userData.user_id, data, router)
       }
 
       onMounted(() => {
           if(route.params.id != null) {
              data.pageTitle = "Editar Conta"
              data.subtitle = "Edite sua conta"
+             listAccountTypes(data)
              return
           }
           data.pageTitle = "Nova Conta"
           data.subtitle="Preencha o formulário abaixo para criar uma nova conta";
+
+         listAccountTypes(data)
       })
 
       return {

@@ -11,6 +11,14 @@
                         <div class="page-action">
                           <button class="btn btn-primary btn-primary-custom" type="button" @click="openForm(null)"><font-awesome-icon icon="fa-solid fa-circle-plus" /></button>
                           <button class="btn btn-secondary" type="button"><font-awesome-icon icon="fa-solid fa-filter" /></button>
+                          <div class="show-per-page">
+                              <select @change="changeLimitPerPage" v-model="data.limit" class="form-select show-pages">
+                                   <option value="5">5</option>
+                                   <option value="10">10</option>
+                                   <option value="50">50</option>
+                                   <option value="100">100</option>
+                              </select>
+                          </div>
                         </div>
                            <div class="card-body page-card-body">
                                 <no-content message="Ainda não há contas cadastradas, clique adicionar para cria sua primeira conta" v-if="!data.contas.length"></no-content>
@@ -42,6 +50,7 @@
                  <nav aria-label="Page navigation example">
                    <ul class="pagination">
                      <li class="page-item"><a @click.prevent="navigatePages('prev')" class="page-link" href="#">Anterior</a></li>
+                     <li v-for="page in data.totalPages" @click.prevent="linkNavigationPage(page)" class="page-item"><a class="page-link" href="#">{{page}}</a></li>
                      <li class="page-item"><a @click.prevent="navigatePages('next')" class="page-link" href="#">Proximo</a></li>
                    </ul>
                  </nav>
@@ -57,12 +66,8 @@ import { useRouter } from "vue-router"
 import PageTitle from "@/components/PageTitle";
 import NoContent from "@/components/NoContent";
 import Swal from 'sweetalert2'
-import HttpService from "@/service/http/HttpService";
-import {showLoading} from "@/service/utils/alertsService";
 import {listAll} from "@/service/http/accountService";
 import store from "@/store"
-
-
 
 export default {
     components: {PageTitle, NoContent},
@@ -72,6 +77,7 @@ export default {
 
       const data = reactive({
          contas : [],
+         limit: 5,
          current_page:1,
          totalPages: 0
       })
@@ -102,12 +108,11 @@ export default {
 
       const navigatePages = (direction) =>{
           if(direction === 'prev') {
-            if(data.current_page < data.totalPages) {
-               return
+            if(data.current_page > 1) {
+               data.current_page -=1
+               listAll(store.getters.userData.user_id, data.limit, data.current_page, data)
+               return;
             }
-            data.current_page -=1
-            listAll(store.getters.userData.user_id, data.current_page, data)
-            return;
           }
 
           if(direction === 'next') {
@@ -116,12 +121,20 @@ export default {
               return
             }
             data.current_page +=1
-            listAll(store.getters.userData.user_id, data.current_page, data)
+            listAll(store.getters.userData.user_id, data.limit, data.current_page, data)
           }
       }
 
+      const changeLimitPerPage = () => {
+          listAll(store.getters.userData.user_id, data.limit, data.current_page, data)
+      }
+
+      const linkNavigationPage = (page) => {
+          listAll(store.getters.userData.user_id, data.limit, page, data)
+      }
+
       onMounted(() => {
-          listAll(store.getters.userData.user_id, data.current_page, data)
+        listAll(store.getters.userData.user_id, data.limit, data.current_page, data)
       })
 
 
@@ -129,7 +142,9 @@ export default {
           data,
           openForm,
           deletePrompt,
-         navigatePages
+          navigatePages,
+          changeLimitPerPage,
+          linkNavigationPage
       }
 
     }
