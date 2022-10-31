@@ -10,9 +10,9 @@
                       <div class="card page-card">
                         <div class="page-action">
                           <button class="btn btn-primary btn-primary-custom" type="button" @click="openForm(null)"><font-awesome-icon icon="fa-solid fa-circle-plus" /></button>
-                          <button class="btn btn-secondary" type="button"><font-awesome-icon icon="fa-solid fa-filter" /></button>
+                          <button class="btn btn-secondary" type="button"><font-awesome-icon @click="openFilter" icon="fa-solid fa-filter" /></button>
                           <div class="show-per-page">
-                              <select @change="changeLimitPerPage" v-model="data.limit" class="form-select show-pages">
+                              <select @change="changeLimitPerPage" v-model="data.pagination.limit" class="form-select show-pages">
                                    <option value="5">5</option>
                                    <option value="10">10</option>
                                    <option value="50">50</option>
@@ -20,6 +20,7 @@
                               </select>
                           </div>
                         </div>
+                        <pager-filter></pager-filter>
                            <div class="card-body page-card-body">
                                 <no-content message="Ainda não há contas cadastradas, clique adicionar para cria sua primeira conta" v-if="!data.contas.length"></no-content>
                                 <table class="table table-hover" v-if="data.contas.length">
@@ -36,7 +37,7 @@
                                       <td>
                                          <div class="row-btn-actions">
                                               <button type="button" @click="openForm(item.id)" class="btn btn-primary btn-primary-custom"><font-awesome-icon icon="fa-solid fa-pen-to-square" /></button>
-                                              <button type="button" @click="deletePrompt(item.description)" class="btn btn-outline-danger"><font-awesome-icon icon="fa-solid fa-trash" /></button>
+                                              <button type="button" @click="deletePrompt(item.description, item.id)" class="btn btn-outline-danger"><font-awesome-icon icon="fa-solid fa-trash" /></button>
                                          </div>
                                       </td>
                                     </tr>
@@ -45,12 +46,15 @@
                       </div>
                  </div>
             </div>
-           <div class="row">
+           <div class="row" v-if="data.contas.length">
                <div class="col-12">
                  <nav aria-label="Page navigation example">
                    <ul class="pagination">
                      <li class="page-item"><a @click.prevent="navigatePages('prev')" class="page-link" href="#">Anterior</a></li>
-                     <li v-for="page in data.totalPages" @click.prevent="linkNavigationPage(page)" class="page-item"><a class="page-link" href="#">{{page}}</a></li>
+                     <li v-for="page in data.pagination.pages" class="page-item">
+                       <span class="page-link" v-if="page === '...'">...</span>
+                       <a v-else @click.prevent="linkNavigationPage(page)" class="page-link" :class="{active: data.pagination.current_page === page}" href="#">{{page}}</a>
+                     </li>
                      <li class="page-item"><a @click.prevent="navigatePages('next')" class="page-link" href="#">Proximo</a></li>
                    </ul>
                  </nav>
@@ -61,26 +65,42 @@
 
 <script>
 
-import {onMounted, reactive} from "vue";
+import {onMounted, reactive, watch} from "vue";
 import { useRouter } from "vue-router"
 import PageTitle from "@/components/PageTitle";
 import NoContent from "@/components/NoContent";
 import Swal from 'sweetalert2'
-import {listAll} from "@/service/http/accountService";
+import {deleteAccount, listAll} from "@/service/http/accountService";
 import store from "@/store"
+import {generatePagesArray} from "@/service/utils/Pagination";
+import Filter from "@/components/PageFilter";
+import PagerFilter from "@/components/PageFilter";
 
 export default {
-    components: {PageTitle, NoContent},
+    components: {PagerFilter, Filter, PageTitle, NoContent},
     setup() {
 
       const router = useRouter();
 
       const data = reactive({
          contas : [],
-         limit: 5,
-         current_page:1,
-         totalPages: 0
+         isOpenFilter: false,
+         pagination : {
+           pages: [],
+           limit: 5,
+           current_page:1,
+           totalPages: 0,
+           totalRows: 0
+         }
       })
+
+      let openFilter = () => {
+          if(!data.isOpenFilter) {
+             data.isOpenFilter = true;
+             return
+          }
+          data.isOpenFilter = false;
+      }
 
       let openForm = (id) => {
          if(id != null) {
@@ -90,7 +110,7 @@ export default {
          router.push({name: "contas-form"})
       }
 
-      let deletePrompt = (descricaoConta) => {
+      let deletePrompt = (descricaoConta, accountId) => {
         Swal.fire({
           title: 'Confirmação',
           text: `Deseja deletar a conta ${descricaoConta} ?`,
@@ -101,46 +121,45 @@ export default {
           cancelButtonText: "Não",
         }).then(result => {
              if(result.isConfirmed) {
-                 Swal.fire("Confirmado o delete", "", "success")
+                 deleteAccount(store.getters.userData.user_id,accountId, data)
              }
         })
       }
 
       const navigatePages = (direction) =>{
           if(direction === 'prev') {
-            if(data.current_page > 1) {
-               data.current_page -=1
-               listAll(store.getters.userData.user_id, data.limit, data.current_page, data)
+            if(data.pagination.current_page > 1) {
+               data.pagination.current_page -=1
+               listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
                return;
             }
           }
 
           if(direction === 'next') {
-            console.log(data.current_page, data.totalPages)
-            if(data.current_page >= data.totalPages) {
+            if(data.pagination.current_page >= data.pagination.totalPages) {
               return
             }
-            data.current_page +=1
-            listAll(store.getters.userData.user_id, data.limit, data.current_page, data)
+            data.pagination.current_page +=1
+            listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
           }
       }
 
       const changeLimitPerPage = () => {
-          listAll(store.getters.userData.user_id, data.limit, data.current_page, data)
+        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       }
 
       const linkNavigationPage = (page) => {
-          listAll(store.getters.userData.user_id, data.limit, page, data)
+        listAll(store.getters.userData.user_id, data.pagination.limit, page, data)
       }
 
       onMounted(() => {
-        listAll(store.getters.userData.user_id, data.limit, data.current_page, data)
+        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       })
-
 
       return {
           data,
           openForm,
+          openFilter,
           deletePrompt,
           navigatePages,
           changeLimitPerPage,

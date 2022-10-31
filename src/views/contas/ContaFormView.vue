@@ -42,7 +42,7 @@ import PageTitle from "@/components/PageTitle";
 import { useRoute, useRouter } from 'vue-router'
 import Swal from "sweetalert2";
 import {listAccountTypes} from "@/service/http/accountTypeService"
-import {saveAccount} from "@/service/http/accountService"
+import {getAccountById, saveAccount, updateAccount} from "@/service/http/accountService"
 import store from "@/store"
 
 export default {
@@ -67,17 +67,21 @@ export default {
       }
 
       const submit = () => {
-          if(!data.account.description) {
-             Swal.fire("Atenção", "Preencha o campo Descrição", "warning", "")
-             return
-          }
+        if(!data.account.description) {
+           Swal.fire("Atenção", "Preencha o campo Descrição", "warning", "")
+           return
+        }
 
         if(!data.account.account_type_id) {
           Swal.fire("Atenção", "Selecione um tipo de conta", "warning", "")
           return
         }
 
-        saveAccount(store.getters.userData.user_id, data, router)
+      if(!route.params.id) {
+         saveAccount(store.getters.userData.user_id, data, router)
+         return;
+       }
+       updateAccount(store.getters.userData.user_id, route.params.id, router, data);
       }
 
       onMounted(() => {
@@ -85,6 +89,7 @@ export default {
              data.pageTitle = "Editar Conta"
              data.subtitle = "Edite sua conta"
              listAccountTypes(data)
+             getAccountById(store.getters.userData.user_id,route.params.id, data)
              return
           }
           data.pageTitle = "Nova Conta"
