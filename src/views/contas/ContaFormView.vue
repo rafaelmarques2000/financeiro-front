@@ -23,7 +23,7 @@
                                     </select>
                                   </div>
                                   <div class="mb-3">
-                                      <button style="margin-right: 10px" @click="submit" class="btn btn-primary btn-primary-custom">Concluir</button>
+                                      <button style="margin-right: 10px" @click="submit" type="button" class="btn btn-primary btn-primary-custom">Concluir</button>
                                       <button type="button" @click="backPage" class="btn btn-secondary">Cancelar</button>
                                   </div>
                                 </form>
@@ -81,6 +81,7 @@ export default {
          saveAccount(store.getters.userData.user_id, data, router)
          return;
        }
+       console.log("caiu errado no update")
        updateAccount(store.getters.userData.user_id, route.params.id, router, data);
       }
 
