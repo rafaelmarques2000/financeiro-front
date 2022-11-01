@@ -10,7 +10,7 @@
                       <div class="card page-card">
                         <div class="page-action">
                           <button class="btn btn-primary btn-primary-custom" type="button" @click="openForm(null)"><font-awesome-icon icon="fa-solid fa-circle-plus" /></button>
-                          <button class="btn btn-secondary" type="button"><font-awesome-icon @click="openFilter" icon="fa-solid fa-filter" /></button>
+                          <button class="btn btn-secondary" type="button" @click="openFilter"><font-awesome-icon icon="fa-solid fa-filter" /></button>
                           <div class="show-per-page">
                               <select @change="changeLimitPerPage" v-model="data.pagination.limit" class="form-select show-pages">
                                    <option value="5">5</option>
@@ -20,7 +20,21 @@
                               </select>
                           </div>
                         </div>
-                        <pager-filter></pager-filter>
+
+                        <div class="filter-body" :class="{'filter-body-open': data.isOpenFilter}">
+                          <div class="row">
+                            <div class="col-6">
+                              <label class="form-label">Descrição</label>
+                              <div class="input-group">
+                                <input type="text" v-model="data.filters.description" class="form-control">
+                                <button type="button" @click="searchFilter" class="btn btn-primary btn-primary-custom">
+                                    <font-awesome-icon icon="fa-solid fa-search"></font-awesome-icon>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                            <div class="card-body page-card-body">
                                 <no-content message="Ainda não há contas cadastradas, clique adicionar para cria sua primeira conta" v-if="!data.contas.length"></no-content>
                                 <table class="table table-hover" v-if="data.contas.length">
@@ -72,12 +86,9 @@ import NoContent from "@/components/NoContent";
 import Swal from 'sweetalert2'
 import {deleteAccount, listAll} from "@/service/http/accountService";
 import store from "@/store"
-import {generatePagesArray} from "@/service/utils/Pagination";
-import Filter from "@/components/PageFilter";
-import PagerFilter from "@/components/PageFilter";
 
 export default {
-    components: {PagerFilter, Filter, PageTitle, NoContent},
+    components: {PageTitle, NoContent},
     setup() {
 
       const router = useRouter();
@@ -85,6 +96,9 @@ export default {
       const data = reactive({
          contas : [],
          isOpenFilter: false,
+         filters: {
+            description: null
+         },
          pagination : {
            pages: [],
            limit: 5,
@@ -152,6 +166,14 @@ export default {
         listAll(store.getters.userData.user_id, data.pagination.limit, page, data)
       }
 
+      const searchFilter = () => {
+        if(data.filters.description === null) {
+           Swal.fire("Informe uma descrição para busca", '', 'error')
+           return;
+        }
+        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
+      }
+
       onMounted(() => {
         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       })
@@ -163,7 +185,8 @@ export default {
           deletePrompt,
           navigatePages,
           changeLimitPerPage,
-          linkNavigationPage
+          linkNavigationPage,
+          searchFilter
       }
 
     }

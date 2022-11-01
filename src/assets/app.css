@@ -98,7 +98,7 @@ body {
 }
 
 .filter-body {
-    display: block;
+    display: none;
     margin-top: 15px;
     margin-left: 20px;
     width: calc(100% - 40px);

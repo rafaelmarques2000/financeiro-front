@@ -5,7 +5,12 @@ import {generatePagesArray} from "@/service/utils/Pagination";
 
 const listAll = (userId, limit, page, data) => {
     showLoading()
-    httpService.get(`/users/${userId}/accounts?limit=${limit}&page=${page}`).then(result => {
+    let url = `/users/${userId}/accounts?limit=${limit}&page=${page}`
+
+    if(data.filters.description != null) {
+       url = url.concat(`&description=${data.filters.description}`)
+    }
+    httpService.get(url).then(result => {
         Swal.close()
         data.pagination.current_page = result.data.current_page
         data.pagination.totalPages = result.data.total_pages
@@ -63,7 +68,6 @@ const deleteAccount = (userId, accountId, data) => {
     showLoading()
     return httpService.delete(`/users/${userId}/accounts/${accountId}`).then(result => {
         Swal.close()
-        Swal.fire("Conta deletada com sucesso", '', 'success')
         listAll(userId, data.pagination.limit, data.pagination.current_page, data)
     }).catch(error => {
         console.log(error)

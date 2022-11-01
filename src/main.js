@@ -24,7 +24,8 @@ import {
     faPlusCircle,
     faFilter,
     faPenToSquare,
-    faTrash
+    faTrash,
+    faSearch
 } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
@@ -37,7 +38,8 @@ library.add(
     faPlusCircle,
     faFilter,
     faPenToSquare,
-    faTrash
+    faTrash,
+    faSearch
 )
 
 
