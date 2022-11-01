@@ -77,7 +77,7 @@ export default {
           return
         }
 
-      if(!route.params.id) {
+      if(route.params.id == null) {
          saveAccount(store.getters.userData.user_id, data, router)
          return;
        }
