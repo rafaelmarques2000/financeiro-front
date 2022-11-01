@@ -23,7 +23,6 @@ const listAll = (userId, limit, page, data) => {
 }
 
 const getAccountById = (userId, accountId, data) => {
-    showLoading()
     httpService.get(`/users/${userId}/accounts/${accountId}`).then(result => {
       Swal.close()
       data.account.description = result.data.description
