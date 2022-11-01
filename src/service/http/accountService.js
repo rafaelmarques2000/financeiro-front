@@ -37,7 +37,6 @@ const getAccountById = (userId, accountId, data) => {
 const saveAccount = (userId, data , router) => {
     showLoading()
     httpService.post(`/users/${userId}/accounts`, data.account).then(result => {
-        Swal.close()
         Swal.fire("Conta cadastrada com sucesso", '', 'success').then(result => {
              if(result.isConfirmed) {
                  router.push({name: "contas"})
@@ -52,7 +51,6 @@ const saveAccount = (userId, data , router) => {
 const updateAccount = (userId,accountId,router,data) => {
     showLoading()
     httpService.put(`/users/${userId}/accounts/${accountId}`, data.account).then(result => {
-        Swal.close()
         Swal.fire("Conta atualizada com sucesso", '', 'success').then(result => {
             if(result.isConfirmed) {
                 router.push({name: "contas"})
