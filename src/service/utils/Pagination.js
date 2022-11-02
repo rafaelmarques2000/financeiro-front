@@ -49,6 +49,11 @@ const calculatePageNumber = (i, currentPage, paginationRange, totalPages) =>
     }
 }
 
+const checkEmptyPage = (data) => {
+    return data.length === 0;
+}
+
 export {
-    generatePagesArray
+    generatePagesArray,
+    checkEmptyPage
 }

@@ -86,6 +86,7 @@ import NoContent from "@/components/NoContent";
 import Swal from 'sweetalert2'
 import {deleteAccount, listAll} from "@/service/http/accountService";
 import store from "@/store"
+import {generatePagesArray} from "@/service/utils/Pagination";
 
 export default {
     components: {PageTitle, NoContent},
@@ -106,6 +107,13 @@ export default {
            totalPages: 0,
            totalRows: 0
          }
+      })
+
+      watch(() => data.contas , (contas) => {
+          if(data.pagination.current_page > 1 && contas.length === 0) {
+            listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page - 1, data)
+          }
+          data.pagination.pages = generatePagesArray(data.pagination.current_page, data.pagination.totalRows, data.pagination.limit, 12)
       })
 
       let openFilter = () => {
@@ -175,7 +183,7 @@ export default {
       }
 
       onMounted(() => {
-        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
+         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       })
 
       return {

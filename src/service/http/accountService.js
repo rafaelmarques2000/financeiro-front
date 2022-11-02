@@ -1,7 +1,6 @@
 import httpService from "@/service/http/HttpService";
-import {showLoading} from "@/service/utils/alertsService";
+import {showAlert, showLoading} from "@/service/utils/alertsService";
 import Swal from "sweetalert2";
-import {generatePagesArray} from "@/service/utils/Pagination";
 
 const listAll = (userId, limit, page, data) => {
     showLoading()
@@ -14,11 +13,11 @@ const listAll = (userId, limit, page, data) => {
         Swal.close()
         data.pagination.current_page = result.data.current_page
         data.pagination.totalPages = result.data.total_pages
+        data.pagination.totalRows = result.data.total_rows
         data.contas = result.data.items
-        data.pagination.pages = generatePagesArray(data.pagination.current_page, result.data.total_rows, data.pagination.limit, 12)
     }).catch(error => {
         Swal.close()
-        Swal.fire("Falha ao obter lista de contas", '', 'error')
+        showAlert("Falha ao obter lista de contas", 'error');
     })
 }
 
@@ -29,35 +28,35 @@ const getAccountById = (userId, accountId, data) => {
       data.account.account_type_id = result.data.accountType.id
     }).catch(error => {
         Swal.close()
-        Swal.fire("Falha ao obter dados da conta", '', 'error')
+        showAlert("Falha ao obter dados da conta", 'error');
     })
 }
 
 const saveAccount = (userId, data , router) => {
     showLoading()
     httpService.post(`/users/${userId}/accounts`, data.account).then(result => {
-        Swal.fire("Conta cadastrada com sucesso", '', 'success').then(result => {
+        showAlert("Conta cadastrada com sucesso!", 'success').then(result => {
              if(result.isConfirmed) {
                  router.push({name: "contas"})
              }
         })
     }).catch(error => {
         Swal.close()
-        Swal.fire("Falha ao cadastrar conta", '', 'error')
+        showAlert("Conta cadastrada com sucesso!", 'error');
     })
 }
 
 const updateAccount = (userId,accountId,router,data) => {
     showLoading()
     httpService.put(`/users/${userId}/accounts/${accountId}`, data.account).then(result => {
-        Swal.fire("Conta atualizada com sucesso", '', 'success').then(result => {
+        showAlert("Conta atualizada com sucesso", 'success').then(result => {
             if(result.isConfirmed) {
                 router.push({name: "contas"})
             }
         })
     }).catch(error => {
         Swal.close()
-        Swal.fire("Falha ao atualizar conta", '', 'error')
+        showAlert("Falha ao atualizar conta", 'error');
     })
 }
 
@@ -69,7 +68,7 @@ const deleteAccount = (userId, accountId, data) => {
     }).catch(error => {
         console.log(error)
         Swal.close()
-        Swal.fire("Falha ao deletar conta", '', 'error')
+        showAlert('Falha ao deletar conta', 'error')
     })
 }
 
