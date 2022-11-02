@@ -41,13 +41,13 @@
                                     <tr class="page-table-header">
                                         <th>Descrição</th>
                                         <th>Tipo</th>
-                                        <th>Data Criação</th>
+                                        <th>Última atualização</th>
                                         <th>Ações</th>
                                     </tr>
                                     <tr v-for="item in data.contas" class="page-table-row">
                                       <td>{{item.description}}</td>
-                                      <td><span class="badge rounded-pill text-bg-primary">{{ item.accountType.description }}</span></td>
-                                      <td>{{item.created_at}}</td>
+                                      <td><span class="badge rounded-pill text-bg-primary" :style="`background:${item.accountType.color}!important`">{{ item.accountType.description }}</span></td>
+                                      <td>{{item.updated_at}}</td>
                                       <td>
                                          <div class="row-btn-actions">
                                               <button type="button" @click="openForm(item.id)" class="btn btn-primary btn-primary-custom"><font-awesome-icon icon="fa-solid fa-pen-to-square" /></button>
