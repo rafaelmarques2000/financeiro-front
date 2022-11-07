@@ -3,7 +3,7 @@
 
            <div class="row">
                 <div class="col-6">
-                  <page-title
+                  <page-title style="border: none"
                       :title="'Bem vindo,' +data.user_show_name"
                       subtitle="Ajuste os filtros para obter resultados"
                   />

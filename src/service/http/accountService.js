@@ -42,7 +42,7 @@ const saveAccount = (userId, data , router) => {
         })
     }).catch(error => {
         Swal.close()
-        showAlert("Conta cadastrada com sucesso!", 'error');
+        showAlert("Falha ao cadastrar conta!", 'error');
     })
 }
 

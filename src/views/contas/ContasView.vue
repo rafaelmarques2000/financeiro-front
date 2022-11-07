@@ -1,13 +1,14 @@
 <template>
     <div class="contas-view page-content">
-            <page-title
-                title="Contas"
-                page-icon="fa-solid fa-receipt"
-                subtitle="Gerencie suas contas"
-            ></page-title>
             <div class="row">
                  <div class="col-12">
                       <div class="card page-card">
+                        <page-title
+                            title="Contas"
+                            page-icon="fa-solid fa-receipt"
+                            subtitle="Gerencie suas contas"
+                            style="padding: 20px"
+                        ></page-title>
                         <div class="page-action">
                           <button class="btn btn-primary btn-primary-custom" type="button" @click="openForm(null)"><font-awesome-icon icon="fa-solid fa-circle-plus" /></button>
                           <button class="btn btn-secondary" type="button" @click="openFilter"><font-awesome-icon icon="fa-solid fa-filter" /></button>
@@ -42,10 +43,10 @@
                                         <th>Descrição</th>
                                         <th>Tipo</th>
                                         <th>Última atualização</th>
-                                        <th>Ações</th>
+                                        <th></th>
                                     </tr>
                                     <tr v-for="item in data.contas" class="page-table-row">
-                                      <td>{{item.description}}</td>
+                                      <td><a href="" @click.prevent="openTransactions(item.id, item.description)">{{item.description}}</a></td>
                                       <td><span class="badge rounded-pill text-bg-primary" :style="`background:${item.accountType.color}!important`">{{ item.accountType.description }}</span></td>
                                       <td>{{item.updated_at}}</td>
                                       <td>
@@ -57,23 +58,24 @@
                                     </tr>
                                 </table>
                            </div>
+                        <div class="row" v-if="data.contas.length" style="padding: 20px">
+                          <div class="col-12">
+                            <nav aria-label="Page navigation example">
+                              <ul class="pagination">
+                                <li class="page-item"><a @click.prevent="navigatePages('prev')" class="page-link" href="#">Anterior</a></li>
+                                <li v-for="page in data.pagination.pages" class="page-item">
+                                  <span class="page-link" v-if="page === '...'">...</span>
+                                  <a v-else @click.prevent="linkNavigationPage(page)" class="page-link" :class="{active: data.pagination.current_page === page}" href="#">{{page}}</a>
+                                </li>
+                                <li class="page-item"><a @click.prevent="navigatePages('next')" class="page-link" href="#">Proximo</a></li>
+                              </ul>
+                            </nav>
+                          </div>
+                        </div>
                       </div>
                  </div>
             </div>
-           <div class="row" v-if="data.contas.length">
-               <div class="col-12">
-                 <nav aria-label="Page navigation example">
-                   <ul class="pagination">
-                     <li class="page-item"><a @click.prevent="navigatePages('prev')" class="page-link" href="#">Anterior</a></li>
-                     <li v-for="page in data.pagination.pages" class="page-item">
-                       <span class="page-link" v-if="page === '...'">...</span>
-                       <a v-else @click.prevent="linkNavigationPage(page)" class="page-link" :class="{active: data.pagination.current_page === page}" href="#">{{page}}</a>
-                     </li>
-                     <li class="page-item"><a @click.prevent="navigatePages('next')" class="page-link" href="#">Proximo</a></li>
-                   </ul>
-                 </nav>
-               </div>
-           </div>
+
     </div>
 </template>
 
@@ -96,7 +98,7 @@ export default {
 
       const data = reactive({
          contas : [],
-         isOpenFilter: false,
+         isOpenFilter: true,
          filters: {
             description: null
          },
@@ -113,7 +115,7 @@ export default {
           if(data.pagination.current_page > 1 && contas.length === 0) {
             listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page - 1, data)
           }
-          data.pagination.pages = generatePagesArray(data.pagination.current_page, data.pagination.totalRows, data.pagination.limit, 12)
+          data.pagination.pages = generatePagesArray(data.pagination.current_page, data.pagination.totalRows, data.pagination.limit, 8)
       })
 
       let openFilter = () => {
@@ -182,6 +184,13 @@ export default {
         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       }
 
+      const openTransactions = (id, description) => {
+        router.push({
+          name:"conta-transaction",
+          params: {id}
+        })
+      }
+
       onMounted(() => {
          listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       })
@@ -194,7 +203,8 @@ export default {
           navigatePages,
           changeLimitPerPage,
           linkNavigationPage,
-          searchFilter
+          searchFilter,
+          openTransactions
       }
 
     }

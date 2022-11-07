@@ -34,7 +34,8 @@ const vuexLocal = new VuexPersistence({
 export default createStore({
   state: {
       isAuth: false,
-      userData: {}
+      userData: {},
+      metadata: {}
   },
   getters: {
      isAuth(state) {
@@ -42,6 +43,9 @@ export default createStore({
      },
      userData(state) {
           return state.userData
+     },
+     metadata(state) {
+         return state.metadata
      }
   },
   mutations: {
@@ -57,6 +61,9 @@ export default createStore({
       clearState(state) {
         state.isAuth = false
         state.userData = {}
+     },
+     setMetadata(state, payload) {
+          state.metadata = payload
      }
   },
   plugins: [vuexLocal.plugin]

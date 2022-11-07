@@ -1,13 +1,13 @@
 <template>
     <div class="conta-form-view page-content">
-            <page-title
-                :title="data.pageTitle"
-                page-icon="fa-solid fa-receipt"
-                :subtitle="data.subtitle"
-            ></page-title>
             <div class="row">
                  <div class="col-12">
                       <div class="card form-page-card">
+                        <page-title
+                            :title="data.pageTitle"
+                            page-icon="fa-solid fa-receipt"
+                            :subtitle="data.subtitle"
+                        ></page-title>
                            <div class="card-body page-card-body">
                                 <form>
                                   <div class="mb-3">

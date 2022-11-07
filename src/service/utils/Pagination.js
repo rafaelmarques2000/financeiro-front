@@ -5,13 +5,18 @@ const generatePagesArray = (currentPage, collectionLength, rowsPerPage, paginati
     let halfWay = Math.ceil(paginationRange / 2);
     let position;
 
+    // console.log(`collectionLength ${collectionLength}`)
+    // console.log(`rowsPerPage ${rowsPerPage}`)
+    // console.log(`halfway ${halfWay}`)
+    // console.log(`totalPages ${totalPages}`)
     if (currentPage <= halfWay) {
         position = 'start';
-    } else if (totalPages - halfWay < currentPage) {
+    } else if ((totalPages - halfWay) < currentPage) {
         position = 'end';
     } else {
         position = 'middle';
     }
+    // console.log(position)
 
     let ellipsesNeeded = paginationRange < totalPages;
     let i = 1;
