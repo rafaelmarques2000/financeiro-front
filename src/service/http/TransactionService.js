@@ -1,8 +1,6 @@
 import httpService from "@/service/http/HttpService";
 import {showAlert, showLoading} from "@/service/utils/alertsService";
 import Swal from "sweetalert2";
-import {listAll} from "@/service/http/accountService";
-
 
 const getAccountDetail = (userId, accountId, data) => {
     showLoading()
@@ -24,11 +22,27 @@ const getAccountTransactions = (userId, accountId, data) => {
         data.pagination.totalPages = result.data.total_pages
         data.pagination.totalRows = result.data.total_rows
         data.transactions = result.data.items
+        data.statistics = result.data.statistic
     }).catch(error => {
         Swal.close()
         showAlert("Falha ao obter transações", 'error');
     })
 }
+const getTransactionById = (userId, accountId,transactionId, data) => {
+    httpService.get(`/users/${userId}/accounts/${accountId}/transactions/${transactionId}`).then(result => {
+        Swal.close()
+        data.transaction.description = result.data.description
+        data.transaction.transaction_type = result.data.transaction_type.id
+        data.transaction.transaction_category = result.data.category.id
+        data.transaction.date = result.data.date.split("/").reverse().join("-")
+        data.transaction.amount = result.data.amount
+        console.log(result.data)
+    }).catch(error => {
+        Swal.close()
+        showAlert("Falha ao obter dados da transacao", 'error');
+    })
+}
+
 
 const deleteTransaction = (userId, accountId, transactionId, data) => {
     showLoading()
@@ -40,9 +54,51 @@ const deleteTransaction = (userId, accountId, transactionId, data) => {
         showAlert('Falha ao deletar transação', 'error')
     })
 }
+const saveTransaction = (userId, accountId, data , router) => {
+    showLoading()
+    let transaction = data.transaction
+    if(transaction.installment === "false") {
+        delete transaction['installment']
+        delete transaction['amount_installments']
+    }
+    transaction.amount = transaction.amount * 100
+    httpService.post(`/users/${userId}/accounts/${accountId}/transactions`, transaction).then(result => {
+        showAlert("Transação cadastrada com sucesso!", 'success').then(result => {
+            if(result.isConfirmed) {
+                router.push({name: "conta-transaction", params: {id: accountId}})
+            }
+        })
+    }).catch(error => {
+        Swal.close()
+        showAlert("Falha ao cadastrar transação!", 'error');
+    })
+}
+
+const updateTransaction = (userId, accountId, transactionId, data , router) => {
+    showLoading()
+    let transaction = data.transaction
+    delete transaction['installment']
+    delete transaction['amount_installments']
+    transaction.amount = transaction.amount * 100
+
+    httpService.put(`/users/${userId}/accounts/${accountId}/transactions/${transactionId}`, transaction).then(result => {
+        showAlert("Transação atualizada com sucesso!", 'success').then(result => {
+            if(result.isConfirmed) {
+                router.push({name: "conta-transaction", params: {id: accountId}})
+            }
+        })
+    }).catch(error => {
+        Swal.close()
+        showAlert("Falha ao atualizar transação!", 'error');
+    })
+}
+
 
 export {
     getAccountDetail,
     getAccountTransactions,
-    deleteTransaction
+    getTransactionById,
+    deleteTransaction,
+    saveTransaction,
+    updateTransaction
 }

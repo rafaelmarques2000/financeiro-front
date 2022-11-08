@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -7,25 +7,24 @@ import "bootstrap/dist/js/bootstrap.js"
 import "../src/assets/reset.css"
 import "../src/assets/app.css"
 
-
 /* import the fontawesome core */
-import { library } from '@fortawesome/fontawesome-svg-core'
+import {library} from '@fortawesome/fontawesome-svg-core'
 
 /* import font awesome icon component */
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
 import {
-    faHome,
-    faReceipt,
-    faSackDollar,
-    faRightFromBracket,
     faChartColumn,
-    faPlusCircle,
     faFilter,
+    faHome,
     faPenToSquare,
-    faTrash,
-    faSearch
+    faPlusCircle,
+    faReceipt,
+    faRightFromBracket,
+    faSackDollar,
+    faSearch,
+    faTrash
 } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
@@ -42,10 +41,7 @@ library.add(
     faSearch
 )
 
-
-
-createApp(App)
-    .use(store)
+createApp(App).use(store)
     .component('font-awesome-icon', FontAwesomeIcon)
     .use(router)
     .mount('#app')

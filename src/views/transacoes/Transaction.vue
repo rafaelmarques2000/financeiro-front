@@ -6,6 +6,20 @@
              :subtitle="`Tipo  - ${data.accountDetails.type}`"
              page-icon="fa-solid fa-receipt"
          ></page-title>
+
+       <div class="alert alert-primary label-top" v-if="data.statistics.length">
+           <div class="row">
+               <div v-for="item in data.statistics" class="col-3">
+                   <h4 class="tipo-transacao-label">{{ item.description }}</h4>
+                    <span class="value-label">{{item.total.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span>
+               </div>
+             <div class="col-3">
+               <h4 class="tipo-transacao-label">Saldo</h4>
+               <span class="value-label">{{calculatedAmount}}</span>
+             </div>
+           </div>
+       </div>
+
        <div class="page-action">
          <button class="btn btn-primary btn-primary-custom" type="button" @click="openForm(null)"><font-awesome-icon icon="fa-solid fa-circle-plus" /></button>
          <button class="btn btn-secondary" type="button" @click="openFilter"><font-awesome-icon icon="fa-solid fa-filter" /></button>
@@ -93,15 +107,14 @@
 </template>
 
 <script>
-import {onMounted, reactive, watch} from "vue";
+import {computed, onMounted, reactive, watch} from "vue";
 import PageTitle from "@/components/PageTitle";
 import NoContent from "@/components/NoContent";
-import {useRoute} from "vue-router"
+import {useRoute, useRouter} from "vue-router"
 import {deleteTransaction, getAccountDetail, getAccountTransactions} from "@/service/http/TransactionService";
 import store from "@/store";
 import {generatePagesArray} from "@/service/utils/Pagination";
 import Swal from "sweetalert2";
-import {deleteAccount} from "@/service/http/accountService";
 
 export default {
   name: "Transaction",
@@ -109,9 +122,11 @@ export default {
   setup() {
 
     const route = useRoute();
+    const router = useRouter();
 
     let data = reactive({
        transactions:[],
+       statistics: [],
        accountDetails: {
            description: null,
            type: null
@@ -190,6 +205,27 @@ export default {
       data.isOpenFilter = false;
     }
 
+    let openForm = (id) => {
+      if(id != null) {
+        router.push({name: "conta-transaction-edit", params:{id_transaction:id}})
+        return
+      }
+      router.push({name: "conta-transaction-new"})
+    }
+
+    const calculatedAmount = computed(() => {
+         let sal = 0
+         let statics = data.statistics.reverse()
+         for(let i = 0; i<statics.length;i++) {
+             if(sal === 0) {
+                sal = statics[i].total
+             }else {
+                sal-=statics[i].total
+             }
+         }
+         return sal.toLocaleString("pt-BR", {style: "currency", currency: "BRL"})
+    })
+
     onMounted(() => {
       const now = new Date();
       const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -213,7 +249,9 @@ export default {
        navigatePages,
        changeLimitPerPage,
        openFilter,
-       deletePrompt
+       deletePrompt,
+       openForm,
+       calculatedAmount
     }
 
   }

@@ -7,6 +7,7 @@ import ContaForm from "@/views/contas/ContaFormView";
 import store from "@/store";
 import {checkValidToken} from "@/service/http/authService";
 import Transaction from "@/views/transacoes/Transaction";
+import TransactionFormView from "@/views/transacoes/TransactionFormView";
 
 const routes = [
   {
@@ -44,6 +45,16 @@ const routes = [
         path: '/app/conta/:id/transaction',
         name: 'conta-transaction',
         component: Transaction
+      },
+      {
+        path: '/app/conta/:id/transaction/new',
+        name: 'conta-transaction-new',
+        component: TransactionFormView
+      },
+      {
+        path: '/app/conta/:id/transaction/edit/:id_transaction',
+        name: 'conta-transaction-edit',
+        component: TransactionFormView
       },
     ]
   },

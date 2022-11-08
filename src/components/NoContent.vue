@@ -11,13 +11,14 @@ export default {
 
 <style>
    .no-content-container {
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Roboto', sans-serif!important;
       font-weight: 300;
       font-size: 1.5em;
       color: #676767;
       text-align: center;
       display: flex;
-      margin-top: 150px;
+      position: relative;
+      top: 78px;
       align-items: center;
       justify-content: center;
    }
