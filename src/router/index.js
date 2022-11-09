@@ -24,7 +24,7 @@ const routes = [
       {
         path: '/app/dashboard',
         name: 'dashboard',
-        component: InicioView
+        component: InicioView,
       },
       {
         path: '/app/contas',
@@ -63,7 +63,8 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
-  linkActiveClass: "active"
+  linkActiveClass: "active",
+  linkExactActiveClass: "active"
 })
 
 router.beforeEach((to, from) => {

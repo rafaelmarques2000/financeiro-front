@@ -1,5 +1,6 @@
 <template>
     <div class="contas-view page-content">
+
             <div class="row">
                  <div class="col-12">
                       <div class="card page-card">

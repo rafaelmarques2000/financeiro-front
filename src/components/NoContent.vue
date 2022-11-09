@@ -17,8 +17,6 @@ export default {
       color: #676767;
       text-align: center;
       display: flex;
-      position: relative;
-      top: 78px;
       align-items: center;
       justify-content: center;
    }

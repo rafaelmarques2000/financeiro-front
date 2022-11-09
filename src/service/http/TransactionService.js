@@ -16,7 +16,11 @@ const getAccountDetail = (userId, accountId, data) => {
 
 const getAccountTransactions = (userId, accountId, data) => {
     showLoading()
-    httpService.get(`/users/${userId}/accounts/${accountId}/transactions?limit=${data.pagination.limit}&page=${data.pagination.current_page}&initial_date=${data.filters.firstDayMonth}&end_date=${data.filters.lastDayMonth}`).then(result => {
+    let url = `/users/${userId}/accounts/${accountId}/transactions?limit=${data.pagination.limit}&page=${data.pagination.current_page}&initial_date=${data.filters.firstDayMonth}&end_date=${data.filters.lastDayMonth}`
+    if(data.filters.description != null) {
+        url = url.concat(`&description=${data.filters.description}`)
+    }
+    httpService.get(url).then(result => {
         Swal.close()
         data.pagination.current_page = result.data.current_page
         data.pagination.totalPages = result.data.total_pages

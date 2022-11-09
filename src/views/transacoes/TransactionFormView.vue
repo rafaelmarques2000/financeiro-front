@@ -1,6 +1,7 @@
 <template>
     <div class="conta-form-view page-content">
-            <div class="row">
+      <router-link class="btn btn-primary btn-primary-custom" :to="`/app/conta/${$route.params.id}/transaction`"><font-awesome-icon icon="fa-solid fa-arrow-left" /> Voltar</router-link>
+      <div class="row">
                  <div class="col-12">
                       <div class="card form-page-card">
                         <page-title

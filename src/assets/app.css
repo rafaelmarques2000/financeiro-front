@@ -174,3 +174,12 @@ body {
     position: relative;
     top: 9px;
 }
+
+.positive-label {
+    font-weight: bold;
+    color: #3c9536;
+}
+.negative-label {
+    font-weight: bold;
+    color: #a81616;
+}

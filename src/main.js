@@ -24,7 +24,8 @@ import {
     faRightFromBracket,
     faSackDollar,
     faSearch,
-    faTrash
+    faTrash,
+    faArrowLeft
 } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
@@ -38,7 +39,8 @@ library.add(
     faFilter,
     faPenToSquare,
     faTrash,
-    faSearch
+    faSearch,
+    faArrowLeft
 )
 
 createApp(App).use(store)

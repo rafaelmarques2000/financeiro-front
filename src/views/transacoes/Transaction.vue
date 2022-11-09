@@ -1,9 +1,11 @@
 <template>
   <div class="page-view page-content">
+
+     <router-link class="btn btn-primary btn-primary-custom" to="/app/contas"><font-awesome-icon icon="fa-solid fa-arrow-left" /> Voltar</router-link>
      <div class="card page-card">
          <page-title
-             :title="`Movimentações - ${data.accountDetails.description}`"
-             :subtitle="`Tipo  - ${data.accountDetails.type}`"
+             :title="`Transações - ${data.accountDetails.description}`"
+             :subtitle="`Tipo - ${data.accountDetails.type}`"
              page-icon="fa-solid fa-receipt"
          ></page-title>
 
@@ -11,7 +13,7 @@
            <div class="row">
                <div v-for="item in data.statistics" class="col-3">
                    <h4 class="tipo-transacao-label">{{ item.description }}</h4>
-                    <span class="value-label">{{item.total.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span>
+                    <span class="value-label">{{(item.total / 100).toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span>
                </div>
              <div class="col-3">
                <h4 class="tipo-transacao-label">Saldo</h4>
@@ -43,9 +45,9 @@
            <div class="col-4">
              <label class="form-label">Data</label>
              <div class="input-group">
-               <input type="date" class="form-control">
+               <input type="date" v-model="data.filters.firstDayMonth" class="form-control">
                <span style="padding: 10px">até</span>
-               <input type="date" class="form-control">
+               <input type="date" v-model="data.filters.lastDayMonth" class="form-control">
              </div>
            </div>
            <div class="col-2">
@@ -72,9 +74,14 @@
              <tr v-for="item in data.transactions" class="page-table-row">
                  <td>{{ item.description }}</td>
                  <td>{{item.date}}</td>
-                 <td><span class="badge rounded-pill text-bg-primary">{{item.transaction_type.description}}</span></td>
+                 <td v-if="item.transaction_type.slug_name === 'receita'"><span class="badge rounded-pill text-bg-primary" style="background: #3c9536!important;">{{item.transaction_type.description}}</span></td>
+                 <td v-else><span class="badge rounded-pill text-bg-primary" style="background: #a81616!important;">{{item.transaction_type.description}}</span></td>
                  <td>{{item.category.description}}</td>
-                 <td>{{item.amount.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}}</td>
+
+
+                 <td v-if="item.transaction_type.slug_name === 'receita'"><span class="positive-label">+ {{item.amount.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}}</span> </td>
+                 <td v-else > <span class="negative-label"> - {{item.amount.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}}</span> </td>
+
                  <td>{{item.installment ? 'sim':'Não'}}</td>
                  <td>{{item.amount_installment == null ? '-': item.amount_installment}}</td>
                  <td>{{item.current_installment == null ? '-': item.current_installment}}</td>
@@ -115,6 +122,7 @@ import {deleteTransaction, getAccountDetail, getAccountTransactions} from "@/ser
 import store from "@/store";
 import {generatePagesArray} from "@/service/utils/Pagination";
 import Swal from "sweetalert2";
+import {showAlert} from "@/service/utils/alertsService";
 
 export default {
   name: "Transaction",
@@ -223,8 +231,16 @@ export default {
                 sal-=statics[i].total
              }
          }
-         return sal.toLocaleString("pt-BR", {style: "currency", currency: "BRL"})
+         return (sal / 100).toLocaleString("pt-BR", {style: "currency", currency: "BRL"})
     })
+
+    const searchFilter = () => {
+        if(data.filters.firstDayMonth === "" || data.filters.lastDayMonth === "") {
+            showAlert("Preencha os filtros de data", "error")
+            return
+        }
+        getAccountTransactions(store.getters.userData.user_id, route.params.id, data)
+    }
 
     onMounted(() => {
       const now = new Date();
@@ -251,7 +267,8 @@ export default {
        openFilter,
        deletePrompt,
        openForm,
-       calculatedAmount
+       calculatedAmount,
+       searchFilter
     }
 
   }
