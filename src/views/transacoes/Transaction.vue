@@ -13,7 +13,8 @@
            <div class="row">
                <div v-for="item in data.statistics" class="col-3">
                    <h4 class="tipo-transacao-label">{{ item.description }}</h4>
-                    <span class="value-label">{{(item.total / 100).toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span>
+                    <span v-if="item.description === 'Despesa'" class="value-label">{{((item.total / 100) * -1).toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span>
+                    <span v-else class="value-label">{{(item.total / 100).toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span>
                </div>
              <div class="col-3">
                <h4 class="tipo-transacao-label">Saldo</h4>
@@ -222,15 +223,17 @@ export default {
     }
 
     const calculatedAmount = computed(() => {
-         let sal = 0
+         let receita = 0;
+         let despesa = 0;
          let statics = data.statistics.reverse()
          for(let i = 0; i<statics.length;i++) {
-             if(sal === 0) {
-                sal = statics[i].total
-             }else {
-                sal-=statics[i].total
+             if(statics[i].description === "Despesa") {
+                despesa = statics[i].total * -1
+             }else{
+                receita = statics[i].total
              }
          }
+         let sal = receita + (despesa)
          return (sal / 100).toLocaleString("pt-BR", {style: "currency", currency: "BRL"})
     })
 

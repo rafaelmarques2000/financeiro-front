@@ -1,6 +1,5 @@
 <template>
     <div class="contas-view page-content">
-
             <div class="row">
                  <div class="col-12">
                       <div class="card page-card">
@@ -10,6 +9,14 @@
                             subtitle="Gerencie suas contas"
                             style="padding: 20px"
                         ></page-title>
+                        <div class="alert alert-primary label-top">
+                          <div class="row">
+                            <div class="col-3">
+                              <h4 class="tipo-transacao-label">Resultado do Mês</h4>
+                              <span class="value-label">{{totalAmountAccounts}}</span>
+                            </div>
+                          </div>
+                        </div>
                         <div class="page-action">
                           <button class="btn btn-primary btn-primary-custom" type="button" @click="openForm(null)"><font-awesome-icon icon="fa-solid fa-circle-plus" /></button>
                           <button class="btn btn-secondary" type="button" @click="openFilter"><font-awesome-icon icon="fa-solid fa-filter" /></button>
@@ -29,10 +36,20 @@
                               <label class="form-label">Descrição</label>
                               <div class="input-group">
                                 <input type="text" v-model="data.filters.description" class="form-control">
-                                <button type="button" @click="searchFilter" class="btn btn-primary btn-primary-custom">
-                                    <font-awesome-icon icon="fa-solid fa-search"></font-awesome-icon>
-                                </button>
                               </div>
+                            </div>
+                            <div class="col-4">
+                              <label class="form-label">Data</label>
+                              <div class="input-group">
+                                <input type="date" v-model="data.filters.firstDayMonth" class="form-control">
+                                <span style="padding: 10px">até</span>
+                                <input type="date" v-model="data.filters.lastDayMonth" class="form-control">
+                              </div>
+                            </div>
+                            <div class="col-2">
+                              <button type="button" @click="searchFilter" style="margin-top: 25px" class="btn btn-primary btn-primary-custom">
+                                <font-awesome-icon icon="fa-solid fa-search"></font-awesome-icon>
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -43,12 +60,16 @@
                                     <tr class="page-table-header">
                                         <th>Descrição</th>
                                         <th>Tipo</th>
+                                        <th>Saldo</th>
                                         <th>Última atualização</th>
                                         <th></th>
                                     </tr>
                                     <tr v-for="item in data.contas" class="page-table-row">
                                       <td><a href="" @click.prevent="openTransactions(item.id, item.description)">{{item.description}}</a></td>
                                       <td><span class="badge rounded-pill text-bg-primary" :style="`background:${item.accountType.color}!important`">{{ item.accountType.description }}</span></td>
+                                      <td v-if="item.amount > 0"><span class="positive-label">+{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
+                                      <td v-else-if="item.amount < 0"><span class="negative-label">{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
+                                      <td v-else><span class="normal-label">{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
                                       <td>{{item.updated_at}}</td>
                                       <td>
                                          <div class="row-btn-actions">
@@ -82,7 +103,7 @@
 
 <script>
 
-import {onMounted, reactive, watch} from "vue";
+import {onMounted, reactive, watch, computed} from "vue";
 import { useRouter } from "vue-router"
 import PageTitle from "@/components/PageTitle";
 import NoContent from "@/components/NoContent";
@@ -101,11 +122,13 @@ export default {
          contas : [],
          isOpenFilter: true,
          filters: {
-            description: null
+            description: null,
+            firstDayMonth: "",
+            lastDayMonth: ""
          },
          pagination : {
            pages: [],
-           limit: 5,
+           limit: 10,
            current_page:1,
            totalPages: 0,
            totalRows: 0
@@ -178,8 +201,8 @@ export default {
       }
 
       const searchFilter = () => {
-        if(data.filters.description === null) {
-           Swal.fire("Informe uma descrição para busca", '', 'error')
+        if(data.filters.firstDayMonth === "" || data.filters.firstDayMonth === "") {
+           Swal.fire("Informe um periodo no filtro de busca", '', 'error')
            return;
         }
         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
@@ -192,8 +215,31 @@ export default {
         })
       }
 
+      const totalAmountAccounts = computed(() => {
+         let amount = 0;
+         data.contas.forEach((item) => {
+             if(item.amount < 0){
+                amount-=item.amount*-1;
+             }else{
+               amount+=item.amount;
+             }
+         })
+         return amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"});
+      })
+
       onMounted(() => {
-         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        const formatter = new Intl.DateTimeFormat("en-GB", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+        data.filters.firstDayMonth = formatter.format(firstDay).split('/').reverse().join('-')
+        data.filters.lastDayMonth = formatter.format(lastDay).split('/').reverse().join('-')
+        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       })
 
       return {
@@ -205,7 +251,8 @@ export default {
           changeLimitPerPage,
           linkNavigationPage,
           searchFilter,
-          openTransactions
+          openTransactions,
+          totalAmountAccounts
       }
 
     }

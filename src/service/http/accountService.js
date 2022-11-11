@@ -9,6 +9,10 @@ const listAll = (userId, limit, page, data) => {
     if(data.filters.description != null) {
        url = url.concat(`&description=${data.filters.description}`)
     }
+
+    url = url.concat(`&initial_date=${data.filters.firstDayMonth}&end_date=${data.filters.lastDayMonth}`)
+
+
     httpService.get(url).then(result => {
         Swal.close()
         data.pagination.current_page = result.data.current_page
