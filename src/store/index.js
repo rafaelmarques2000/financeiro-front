@@ -35,7 +35,11 @@ export default createStore({
   state: {
       isAuth: false,
       userData: {},
-      metadata: {}
+      metadata: {},
+      filters: {
+          firstDate: null,
+          lastDate: null
+      }
   },
   getters: {
      isAuth(state) {
@@ -46,6 +50,12 @@ export default createStore({
      },
      metadata(state) {
          return state.metadata
+     },
+     getFirstDate(state) {
+         return state.filters.firstDate
+     },
+     getLastDate(state) {
+          return state.filters.lastDate
      }
   },
   mutations: {
@@ -64,6 +74,12 @@ export default createStore({
      },
      setMetadata(state, payload) {
           state.metadata = payload
+     },
+     setFirstDate(state, firstDate) {
+          state.filters.firstDate = firstDate
+     },
+     setLastDate(state, lastDate) {
+          state.filters.lastDate = lastDate
      }
   },
   plugins: [vuexLocal.plugin]

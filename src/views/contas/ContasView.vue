@@ -13,7 +13,8 @@
                           <div class="row">
                             <div class="col-3">
                               <h4 class="tipo-transacao-label">Resultado do Mês</h4>
-                              <span class="value-label">{{totalAmountAccounts}}</span>
+                              <span v-if="isNegativeAmount" class="value-label negative-label">{{totalAmountAccounts}}</span>
+                              <span v-else class="value-label positive-label">{{totalAmountAccounts}}</span>
                             </div>
                           </div>
                         </div>
@@ -56,7 +57,7 @@
 
                            <div class="card-body page-card-body">
                                 <no-content message="Ainda não há contas cadastradas, clique adicionar para cria sua primeira conta" v-if="!data.contas.length"></no-content>
-                                <table class="table table-hover" v-if="data.contas.length">
+                                <table class="table table-striped" v-if="data.contas.length">
                                     <tr class="page-table-header">
                                         <th>Descrição</th>
                                         <th>Tipo</th>
@@ -65,12 +66,12 @@
                                         <th></th>
                                     </tr>
                                     <tr v-for="item in data.contas" class="page-table-row">
-                                      <td><a href="" @click.prevent="openTransactions(item.id, item.description)">{{item.description}}</a></td>
-                                      <td><span class="badge rounded-pill text-bg-primary" :style="`background:${item.accountType.color}!important`">{{ item.accountType.description }}</span></td>
-                                      <td v-if="item.amount > 0"><span class="positive-label">+{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
-                                      <td v-else-if="item.amount < 0"><span class="negative-label">{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
-                                      <td v-else><span class="normal-label">{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
-                                      <td>{{item.updated_at}}</td>
+                                      <td @click="openTransactions(item.id, item.description)">{{item.description}}</td>
+                                      <td @click="openTransactions(item.id, item.description)"><span class="badge rounded-pill text-bg-primary" :style="`background:${item.accountType.color}!important`">{{ item.accountType.description }}</span></td>
+                                      <td @click="openTransactions(item.id, item.description)" v-if="item.amount > 0"><span class="positive-label">+{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
+                                      <td @click="openTransactions(item.id, item.description)" v-else-if="item.amount < 0"><span class="negative-label">{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
+                                      <td @click="openTransactions(item.id, item.description)" v-else><span class="normal-label">{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
+                                      <td @click="openTransactions(item.id, item.description)">{{item.updated_at}}</td>
                                       <td>
                                          <div class="row-btn-actions">
                                               <button type="button" @click="openForm(item.id)" class="btn btn-primary btn-primary-custom"><font-awesome-icon icon="fa-solid fa-pen-to-square" /></button>
@@ -205,6 +206,8 @@ export default {
            Swal.fire("Informe um periodo no filtro de busca", '', 'error')
            return;
         }
+        store.commit("setFirstDate", data.filters.firstDayMonth)
+        store.commit("setLastDate", data.filters.lastDayMonth)
         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       }
 
@@ -227,18 +230,40 @@ export default {
          return amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"});
       })
 
+      const isNegativeAmount = computed(() => {
+        let amount = 0;
+        data.contas.forEach((item) => {
+          if(item.amount < 0){
+            amount-=item.amount*-1;
+          }else{
+            amount+=item.amount;
+          }
+        })
+         return amount < 0;
+      })
+
       onMounted(() => {
-        const now = new Date();
-        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
         const formatter = new Intl.DateTimeFormat("en-GB", {
           year: "numeric",
           month: "2-digit",
           day: "2-digit",
         })
-        data.filters.firstDayMonth = formatter.format(firstDay).split('/').reverse().join('-')
-        data.filters.lastDayMonth = formatter.format(lastDay).split('/').reverse().join('-')
+
+        const now = new Date();
+        const firstDay = formatter.format(new Date(now.getFullYear(), now.getMonth(), 1)).split('/').reverse().join('-');
+        const lastDay = formatter.format(new Date(now.getFullYear(), now.getMonth() + 1, 0)).split('/').reverse().join('-');
+
+
+        if(store.getters.getFirstDate != null) {
+          data.filters.firstDayMonth = store.getters.getFirstDate
+          data.filters.lastDayMonth = store.getters.getLastDate
+        }else {
+          store.commit("setFirstDate", firstDay)
+          store.commit("setLastDate", lastDay)
+          data.filters.firstDayMonth = firstDay
+          data.filters.lastDayMonth = lastDay
+        }
         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       })
 
@@ -252,7 +277,8 @@ export default {
           linkNavigationPage,
           searchFilter,
           openTransactions,
-          totalAmountAccounts
+          totalAmountAccounts,
+          isNegativeAmount
       }
 
     }
