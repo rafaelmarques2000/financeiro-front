@@ -4,8 +4,8 @@
            <div class="row">
                 <div class="col-6">
                   <page-title style="border: none"
-                      :title="'Bem vindo,' +data.user_show_name"
-                      subtitle="Ajuste os filtros para obter resultados"
+                      :title="'Bem vindo, ' +data.user_show_name+'!'"
+                      subtitle="Acompanhe aqui a evolução das suas finanças."
                   />
                   <div class="container cards-content-chart">
                       <div class="card chart-card">

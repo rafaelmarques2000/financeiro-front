@@ -12,7 +12,7 @@
                         <div class="alert alert-primary label-top">
                           <div class="row">
                             <div class="col-3">
-                              <h4 class="tipo-transacao-label">Resultado do Mês</h4>
+                              <h4 class="tipo-transacao-label">Resultado do mês</h4>
                               <span v-if="isNegativeAmount" class="value-label negative-label">{{totalAmountAccounts}}</span>
                               <span v-else class="value-label positive-label">{{totalAmountAccounts}}</span>
                             </div>
@@ -71,7 +71,7 @@
                                       <td @click="openTransactions(item.id, item.description)" v-if="item.amount > 0"><span class="positive-label">+{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
                                       <td @click="openTransactions(item.id, item.description)" v-else-if="item.amount < 0"><span class="negative-label">{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
                                       <td @click="openTransactions(item.id, item.description)" v-else><span class="normal-label">{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span></td>
-                                      <td @click="openTransactions(item.id, item.description)">{{item.updated_at}}</td>
+                                      <td @click="openTransactions(item.id, item.description)">{{formatDateAndHour(item.updated_at)}}</td>
                                       <td>
                                          <div class="row-btn-actions">
                                               <button type="button" @click="openForm(item.id)" class="btn btn-primary btn-primary-custom"><font-awesome-icon icon="fa-solid fa-pen-to-square" /></button>
@@ -106,12 +106,15 @@
 
 import {onMounted, reactive, watch, computed} from "vue";
 import { useRouter } from "vue-router"
+import {deleteAccount, listAll} from "@/service/http/accountService";
+import {generatePagesArray} from "@/service/utils/Pagination";
+import {formatDateAndHour} from "@/service/utils/date";
+
 import PageTitle from "@/components/PageTitle";
 import NoContent from "@/components/NoContent";
 import Swal from 'sweetalert2'
-import {deleteAccount, listAll} from "@/service/http/accountService";
 import store from "@/store"
-import {generatePagesArray} from "@/service/utils/Pagination";
+
 
 export default {
     components: {PageTitle, NoContent},
@@ -277,6 +280,7 @@ export default {
           linkNavigationPage,
           searchFilter,
           openTransactions,
+          formatDateAndHour,
           totalAmountAccounts,
           isNegativeAmount
       }

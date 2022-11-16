@@ -89,13 +89,13 @@ export default {
 
       onMounted(() => {
           if(route.params.id != null) {
-             data.pageTitle = "Editar Conta"
+             data.pageTitle = "Editar conta"
              data.subtitle = "Edite sua conta"
              listAccountTypes(data)
              getAccountById(store.getters.userData.user_id,route.params.id, data)
              return
           }
-          data.pageTitle = "Nova Conta"
+          data.pageTitle = "Nova conta"
           data.subtitle="Preencha o formulário abaixo para criar uma nova conta";
 
          listAccountTypes(data)
