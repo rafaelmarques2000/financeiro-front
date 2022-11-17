@@ -41,11 +41,26 @@
                             </div>
                             <div class="col-4">
                               <label class="form-label">Data</label>
-                              <div class="input-group">
-                                <input type="date" v-model="data.filters.firstDayMonth" class="form-control">
-                                <span style="padding: 10px">até</span>
-                                <input type="date" v-model="data.filters.lastDayMonth" class="form-control">
-                              </div>
+                                 <v-date-picker
+                                     v-model="data.filters.range"
+                                     mode="date"
+                                     is-range
+                                 >
+                                   <template v-slot="{ inputValue, inputEvents, isDragging }">
+                                     <div style="display: flex">
+                                       <input class="form-control" style="margin-right: 10px"
+                                           :value="inputValue.start"
+                                           v-on="inputEvents.start"
+                                       />
+                                       <span style="padding: 10px">até</span>
+                                       <input
+                                           class="form-control"
+                                           :value="inputValue.end"
+                                           v-on="inputEvents.end"
+                                       />
+                                     </div>
+                                   </template>
+                                 </v-date-picker>
                             </div>
                             <div class="col-2">
                               <button type="button" @click="searchFilter" style="margin-top: 25px" class="btn btn-primary btn-primary-custom">
@@ -104,8 +119,8 @@
 
 <script>
 
-import {onMounted, reactive, watch, computed} from "vue";
-import { useRouter } from "vue-router"
+import {computed, onMounted, reactive, watch} from "vue";
+import {useRouter} from "vue-router"
 import {deleteAccount, listAll} from "@/service/http/accountService";
 import {generatePagesArray} from "@/service/utils/Pagination";
 import {formatDateAndHour} from "@/service/utils/date";
@@ -117,7 +132,7 @@ import store from "@/store"
 
 
 export default {
-    components: {PageTitle, NoContent},
+    components: {PageTitle, NoContent, },
     setup() {
 
       const router = useRouter();
@@ -126,9 +141,8 @@ export default {
          contas : [],
          isOpenFilter: true,
          filters: {
-            description: null,
-            firstDayMonth: "",
-            lastDayMonth: ""
+            range: null,
+            description: null
          },
          pagination : {
            pages: [],
@@ -165,7 +179,7 @@ export default {
       let deletePrompt = (descricaoConta, accountId) => {
         Swal.fire({
           title: 'Confirmação',
-          text: `Deseja deletar a conta ${descricaoConta} ?`,
+          text: `Deseja deletar a conta ${descricaoConta}?`,
           icon: 'question',
           showConfirmButton: true,
           confirmButtonText: "Sim",
@@ -205,12 +219,11 @@ export default {
       }
 
       const searchFilter = () => {
-        if(data.filters.firstDayMonth === "" || data.filters.firstDayMonth === "") {
+        if(data.filters.range == null) {
            Swal.fire("Informe um periodo no filtro de busca", '', 'error')
            return;
         }
-        store.commit("setFirstDate", data.filters.firstDayMonth)
-        store.commit("setLastDate", data.filters.lastDayMonth)
+        store.commit("setDateFilterRange", data.filters.range)
         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       }
 
@@ -246,26 +259,17 @@ export default {
       })
 
       onMounted(() => {
-
-        const formatter = new Intl.DateTimeFormat("en-GB", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        })
-
         const now = new Date();
-        const firstDay = formatter.format(new Date(now.getFullYear(), now.getMonth(), 1)).split('/').reverse().join('-');
-        const lastDay = formatter.format(new Date(now.getFullYear(), now.getMonth() + 1, 0)).split('/').reverse().join('-');
+        const range = {
+           start: new Date(now.getFullYear(), now.getMonth(), 1),
+           end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+        }
 
-
-        if(store.getters.getFirstDate != null) {
-          data.filters.firstDayMonth = store.getters.getFirstDate
-          data.filters.lastDayMonth = store.getters.getLastDate
+        if(store.getters.getDateFilterRange != null) {
+          data.filters.range = store.getters.getDateFilterRange
         }else {
-          store.commit("setFirstDate", firstDay)
-          store.commit("setLastDate", lastDay)
-          data.filters.firstDayMonth = firstDay
-          data.filters.lastDayMonth = lastDay
+          store.commit('setDateFilterRange', range)
+          data.filters.range = range
         }
         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       })

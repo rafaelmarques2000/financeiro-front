@@ -1,6 +1,7 @@
 import httpService from "@/service/http/HttpService";
 import {showAlert, showLoading} from "@/service/utils/alertsService";
 import Swal from "sweetalert2";
+import {formatDate} from "@/service/utils/date";
 
 const getAccountDetail = (userId, accountId, data) => {
     showLoading()
@@ -16,7 +17,7 @@ const getAccountDetail = (userId, accountId, data) => {
 
 const getAccountTransactions = (userId, accountId, data) => {
     showLoading()
-    let url = `/users/${userId}/accounts/${accountId}/transactions?limit=${data.pagination.limit}&page=${data.pagination.current_page}&initial_date=${data.filters.firstDayMonth}&end_date=${data.filters.lastDayMonth}`
+    let url = `/users/${userId}/accounts/${accountId}/transactions?limit=${data.pagination.limit}&page=${data.pagination.current_page}&initial_date=${formatDate(data.filters.range.start)}&end_date=${formatDate(data.filters.range.end)}`
     if(data.filters.description != null) {
         url = url.concat(`&description=${data.filters.description}`)
     }
@@ -26,7 +27,7 @@ const getAccountTransactions = (userId, accountId, data) => {
         data.pagination.totalPages = result.data.total_pages
         data.pagination.totalRows = result.data.total_rows
         data.transactions = result.data.items
-        data.statistics = result.data.statistic
+        data.statistics = result.data.statistic.reverse()
     }).catch(error => {
         Swal.close()
         showAlert("Falha ao obter transações", 'error');

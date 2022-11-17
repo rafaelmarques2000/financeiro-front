@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.css"
 import "bootstrap/dist/js/bootstrap.js"
 import "../src/assets/reset.css"
 import "../src/assets/app.css"
+import 'v-calendar/dist/style.css';
 
 /* import the fontawesome core */
 import {library} from '@fortawesome/fontawesome-svg-core'
@@ -25,7 +26,7 @@ import {
     faSackDollar,
     faSearch,
     faTrash,
-    faArrowLeft
+    faArrowLeft, faArrowRight
 } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
@@ -40,10 +41,15 @@ library.add(
     faPenToSquare,
     faTrash,
     faSearch,
-    faArrowLeft
+    faArrowLeft,
+    faArrowRight
 )
 
-createApp(App).use(store)
+import VCalendar from 'v-calendar';
+
+createApp(App)
+    .use(store)
+    .use(VCalendar)
     .component('font-awesome-icon', FontAwesomeIcon)
     .use(router)
     .mount('#app')

@@ -19,7 +19,8 @@
              <div class="col-3">
                <h4 class="tipo-transacao-label">Saldo</h4>
                <span v-if="IsNegativeAmount" class="value-label negative-label">{{calculatedAmount}}</span>
-               <span v-else class="value-label negative-label">{{calculatedAmount}}</span>
+               <span v-else-if="!isNegativeAmount" class="value-label positive-label">{{calculatedAmount}}</span>
+               <span v-else class="value-label normal-label">{{calculatedAmount}}</span>
              </div>
            </div>
        </div>
@@ -46,11 +47,26 @@
            </div>
            <div class="col-4">
              <label class="form-label">Data</label>
-             <div class="input-group">
-               <input type="date" v-model="data.filters.firstDayMonth" class="form-control">
-               <span style="padding: 10px">até</span>
-               <input type="date" v-model="data.filters.lastDayMonth" class="form-control">
-             </div>
+             <v-date-picker
+                 v-model="data.filters.range"
+                 mode="date"
+                 is-range
+             >
+               <template v-slot="{ inputValue, inputEvents, isDragging }">
+                 <div style="display: flex">
+                   <input class="form-control" style="margin-right: 10px"
+                          :value="inputValue.start"
+                          v-on="inputEvents.start"
+                   />
+                   <span style="padding: 10px">até</span>
+                   <input
+                       class="form-control"
+                       :value="inputValue.end"
+                       v-on="inputEvents.end"
+                   />
+                 </div>
+               </template>
+             </v-date-picker>
            </div>
            <div class="col-2">
              <button type="button" @click="searchFilter" style="margin-top: 25px" class="btn btn-primary btn-primary-custom">
@@ -84,7 +100,7 @@
                  <td v-if="item.transaction_type.slug_name === 'receita'"><span class="positive-label">+ {{item.amount.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}}</span> </td>
                  <td v-else > <span class="negative-label"> - {{item.amount.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}}</span> </td>
 
-                 <td>{{item.installment ? 'sim':'Não'}}</td>
+                 <td>{{item.installment ? 'Sim':'Não'}}</td>
                  <td>{{item.amount_installment == null ? '-': item.amount_installment}}</td>
                  <td>{{item.current_installment == null ? '-': item.current_installment}}</td>
                  <td>
@@ -143,9 +159,8 @@ export default {
        },
        isOpenFilter: true,
        filters: {
-          description: "",
-          firstDayMonth: "",
-          lastDayMonth: ""
+          range: "",
+          description: ""
        },
        pagination : {
         pages: [],
@@ -194,7 +209,7 @@ export default {
     let deletePrompt = (descricao, transactionId) => {
       Swal.fire({
         title: 'Confirmação',
-        text: `Deseja deletar a transação descrita como ${descricao} ?`,
+        text: `Deseja deletar a transação descrita como ${descricao}?`,
         icon: 'question',
         showConfirmButton: true,
         confirmButtonText: "Sim",
@@ -226,7 +241,7 @@ export default {
     const calculatedAmount = computed(() => {
          let receita = 0;
          let despesa = 0;
-         let statics = data.statistics.reverse()
+         let statics = data.statistics
          for(let i = 0; i<statics.length;i++) {
              if(statics[i].description === "Despesa") {
                 despesa = statics[i].total * -1
@@ -254,7 +269,7 @@ export default {
     })
 
     const searchFilter = () => {
-        if(data.filters.firstDayMonth === "" || data.filters.lastDayMonth === "") {
+        if(data.filters.range == null) {
             showAlert("Preencha os filtros de data", "error")
             return
         }
@@ -263,20 +278,16 @@ export default {
 
     onMounted(() => {
       const now = new Date();
-      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      const range = {
+        start: new Date(now.getFullYear(), now.getMonth(), 1),
+        end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+      }
 
-      const formatter = new Intl.DateTimeFormat("en-GB", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      })
-      if(store.getters.getFirstDate != null) {
-         data.filters.firstDayMonth = store.getters.getFirstDate
-         data.filters.lastDayMonth = store.getters.getLastDate
+      if(store.getters.getDateFilterRange != null) {
+        data.filters.range = store.getters.getDateFilterRange
       }else {
-        data.filters.firstDayMonth = formatter.format(firstDay).split('/').reverse().join('-')
-        data.filters.lastDayMonth = formatter.format(lastDay).split('/').reverse().join('-')
+        store.commit('setDateFilterRange', range)
+        data.filters.range = range
       }
 
       getAccountDetail(store.getters.userData.user_id, route.params.id, data)

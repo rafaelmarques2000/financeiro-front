@@ -1,6 +1,7 @@
 import httpService from "@/service/http/HttpService";
 import {showAlert, showLoading} from "@/service/utils/alertsService";
 import Swal from "sweetalert2";
+import {formatDate} from "@/service/utils/date";
 
 const listAll = (userId, limit, page, data) => {
     showLoading()
@@ -10,8 +11,7 @@ const listAll = (userId, limit, page, data) => {
        url = url.concat(`&description=${data.filters.description}`)
     }
 
-    url = url.concat(`&initial_date=${data.filters.firstDayMonth}&end_date=${data.filters.lastDayMonth}`)
-
+    url = url.concat(`&initial_date=${formatDate(data.filters.range.start)}&end_date=${formatDate(data.filters.range.end)}`)
 
     httpService.get(url).then(result => {
         Swal.close()
@@ -53,7 +53,7 @@ const saveAccount = (userId, data , router) => {
 const updateAccount = (userId,accountId,router,data) => {
     showLoading()
     httpService.put(`/users/${userId}/accounts/${accountId}`, data.account).then(result => {
-        showAlert("Conta atualizada com sucesso", 'success').then(result => {
+        showAlert("Conta atualizada com sucesso!", 'success').then(result => {
             if(result.isConfirmed) {
                 router.push({name: "contas"})
             }

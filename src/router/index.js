@@ -77,7 +77,6 @@ router.beforeEach((to, from) => {
 
        if(user.token === "" || !user.hasOwnProperty("token")) {
          return router.push({name: "login"})
-
        }
 
       checkValidToken(user.token).then(result => {}).catch(error => {
