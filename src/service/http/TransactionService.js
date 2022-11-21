@@ -41,7 +41,6 @@ const getTransactionById = (userId, accountId,transactionId, data) => {
         data.transaction.transaction_category = result.data.category.id
         data.transaction.date = result.data.date.split("/").reverse().join("-")
         data.transaction.amount = result.data.amount
-        console.log(result.data)
     }).catch(error => {
         Swal.close()
         showAlert("Falha ao obter dados da transacao", 'error');
