@@ -18,7 +18,7 @@ export default {
   setup(props) {
     const { inputRef, setValue} = useCurrencyInput(props.options)
     watch(
-        () => props.modelValue, // Vue 2: props.value
+        () => props.modelValue,
         (value) => {
           setValue(value)
         }

@@ -1,119 +1,100 @@
 <template>
   <div class="inicio-view page-content">
 
+          <div class="row">
+              <div class="col-6">
+                <page-title style="border: none"
+                            :title="'Bem vindo, ' +data.user_show_name+'!'"
+                            subtitle="Acompanhe aqui a evolução das suas finanças."
+                />
+              </div>
+              <div class="col-6" style="display: flex">
+
+              </div>
+          </div>
+
            <div class="row">
                 <div class="col-6">
-                  <page-title style="border: none"
-                      :title="'Bem vindo, ' +data.user_show_name+'!'"
-                      subtitle="Acompanhe aqui a evolução das suas finanças."
-                  />
-                  <div class="container cards-content-chart">
-                      <div class="card chart-card">
-                          <div class="card-body">
-                              <bar
-                                  :chart-data="data.chartData"
-                                  :chart-options="data.chartOptions"
-                              />
-                          </div>
+                  <div class="card cards-content-chart">
+                      <h1 class="chart-content-title">Gastos por categoria</h1>
+                      <div class="chart-pie-content" style="justify-content: center; min-height: 300px; margin-bottom: 30px">
+                        <no-content message="Não há dados no período" style="position: relative; top: 50%" v-if="data.dashboard.expensePerCategoryData == null"></no-content>
+                        <div id="bar-chart"></div>
                       </div>
                   </div>
                 </div>
 
              <div class="col-6">
+               <div class="card cards-content-chart ranking-category">
+                 <h1 class="chart-content-title">Ranking de gastos</h1>
+                 <div class="chart-pie-content" style="padding-left: 64px;">
+                   <div class="details-pie-content">
+                     <no-content message="Não há dados no período" style="position: relative; top: 50%" v-if="data.dashboard.expensePerCategoryData == null"></no-content>
+                     <div v-else v-for="item in data.dashboard.expensePerCategoryData" class="categories-progress">
+                       <h4>{{item.description}} - {{ formatMoneyBRL(item.amount) }}</h4>
+                       <div class="progress" style="height: 20px;">
+                         <div class="progress-bar progress-bar-animated" role="progressbar" :style="`width: ${item.percentage}%; background:${data.dashboard.expensePerCategoryColors[item.description]}`" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                       </div>
+                     </div>
 
-               <div class="dropdown data-filter">
-                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                   Hoje(27/10)
-                 </button>
-                 <ul class="dropdown-menu">
-                   <li><button class="dropdown-item" type="button">Action</button></li>
-                   <li><button class="dropdown-item" type="button">Another action</button></li>
-                   <li><button class="dropdown-item" type="button">Something else here</button></li>
-                 </ul>
+                   </div>
+                 </div>
                </div>
-
-               <div class="container cards-content">
-                 <div class="row metric-card-row">
-                    <div class="col-md-6">
-                        <div class="card metric-card metric-card-blue">
-                            <div class="card-body">
-                                 <h5 class="title-card">Total compras mês</h5>
-                                 <span class="card-value">R$ 500,00</span>
-                            </div>
-                        </div>
-                    </div>
-                   <div class="col-md-6">
-                     <div class="card metric-card metric-card-blue">
-                       <div class="card-body">
-                         <h5 class="title-card">Total compras mês</h5>
-                         <span class="card-value">R$ 500,00</span>
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-
-                 <div class="row">
-                   <div class="col-md-6">
-                     <div class="card metric-card metric-card-blue">
-                       <div class="card-body">
-                         <h5 class="title-card">Total compras mês</h5>
-                         <span class="card-value">R$ 500,00</span>
-                       </div>
-                     </div>
-                   </div>
-
-                   <div class="col-md-6">
-                     <div class="card metric-card metric-card-blue">
-                       <div class="card-body">
-                         <h5 class="title-card">Total compras mês</h5>
-                         <span class="card-value">R$ 500,00</span>
-                       </div>
-                     </div>
-                   </div>
-                 </div>
              </div>
-             </div>
+
+<!--             <div class="col-6">-->
+<!--               <div class="dropdown data-filter">-->
+<!--                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                   Hoje(27/10)-->
+<!--                 </button>-->
+<!--                 <ul class="dropdown-menu">-->
+<!--                   <li><button class="dropdown-item" type="button">Action</button></li>-->
+<!--                   <li><button class="dropdown-item" type="button">Another action</button></li>-->
+<!--                   <li><button class="dropdown-item" type="button">Something else here</button></li>-->
+<!--                 </ul>-->
+<!--               </div>-->
+<!--             </div>-->
 
            </div>
+
+
   </div>
 </template>
 
 <script>
 
-import { reactive } from "vue";
-import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { reactive, onMounted, ref } from "vue";
 import pageTitle from "@/components/PageTitle";
 import store from "@/store";
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
-
+import {generateChartExpensePerCategory} from "@/service/statistic/Charts";
+import {formatMoneyBRL} from "@/service/utils/helpers";
+import NoContent from "@/components/NoContent";
 export default {
-    components: {Bar, pageTitle},
+    components: {NoContent, pageTitle},
     setup() {
-
       const data = reactive({
-        chartData: {
-          labels: [ 'January', 'February', 'March'],
-          datasets: [
-            {
-              label: 'Faturas ao longo dos meses',
-              backgroundColor: "#7DA0FA",
-              data: [40, 20, 12]
-            }
-          ]
+        user_show_name: store.getters.userData.show_name,
+        filters: {
+           initialDate: "",
+           endDate: ""
         },
-        chartOptions: {
-          responsive: true,
-          maintainAspectRatio: false
-        },
-        user_show_name: store.getters.userData.show_name
+        dashboard: {
+          expensePerCategoryData: null,
+          expensePerCategoryColors: []
+        }
       })
 
+      onMounted(() => {
+          const now = new Date();
+          data.filters.initialDate = new Date(now.getFullYear(), now.getMonth(), 1)
+          data.filters.endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+          generateChartExpensePerCategory(data)
+      })
 
       return {
-          data
+          data,
+          formatMoneyBRL
       }
-
     }
  }
 

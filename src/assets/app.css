@@ -199,3 +199,44 @@ body {
     height: 33px;
     right: 3px;
 }
+
+.chart-pie-content {
+    display:flex;
+    flex-direction: row
+}
+
+.chart-content-title {
+    text-align: center;
+    font-size: 1.5em;
+    background: #4B49AC;
+    color:#fff;
+    padding: 16px;
+    margin-bottom: 35px;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+}
+
+.details-pie-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    top: -20px;
+    min-height: 300px;
+    max-height: 300px;
+    overflow: auto;
+}
+
+.categories-progress {
+    width: 90%;
+    padding: 15px;
+}
+
+.categories-progress h4 {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.ranking-category {
+    height: auto;
+}

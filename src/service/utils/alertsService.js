@@ -11,6 +11,10 @@ const showLoading = () => {
         });
 }
 
+const hiddenLoading = () => {
+    Swal.close()
+}
+
 const showAlert = (message, icon) => {
     return Swal.fire({
         title:"",
@@ -25,5 +29,6 @@ const showAlert = (message, icon) => {
 
 export  {
     showLoading,
-    showAlert
+    showAlert,
+    hiddenLoading
 }

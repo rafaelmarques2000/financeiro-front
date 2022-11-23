@@ -9,19 +9,15 @@
              page-icon="fa-solid fa-receipt"
          ></page-title>
 
-       <div class="alert alert-primary label-top" v-if="data.statistics.length">
+       <div class="alert alert-primary label-top">
            <div class="row">
                <div v-for="item in data.statistics" class="col-3">
                    <h4 class="tipo-transacao-label">{{ item.description }}</h4>
-                    <span v-if="item.description === 'Despesa'" class="value-label negative-label">{{((item.total / 100) * -1).toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span>
-                    <span v-else class="value-label positive-label">{{(item.total / 100).toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span>
+                    <span class="value-label normal-label" :class="{
+                      'negative-label': item.amount < 0,
+                      'positive-label': item.amount > 0,
+                    }">{{item.amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"})}}</span>
                </div>
-             <div class="col-3">
-               <h4 class="tipo-transacao-label">Saldo</h4>
-               <span v-if="IsNegativeAmount" class="value-label negative-label">{{calculatedAmount}}</span>
-               <span v-else-if="!isNegativeAmount" class="value-label positive-label">{{calculatedAmount}}</span>
-               <span v-else class="value-label normal-label">{{calculatedAmount}}</span>
-             </div>
            </div>
        </div>
 
@@ -141,6 +137,7 @@ import store from "@/store";
 import {generatePagesArray} from "@/service/utils/Pagination";
 import Swal from "sweetalert2";
 import {showAlert} from "@/service/utils/alertsService";
+import {getAccountPeriodStatistic} from "@/service/http/accountStatisticService";
 
 export default {
   name: "Transaction",
@@ -152,7 +149,7 @@ export default {
 
     let data = reactive({
        transactions:[],
-       statistics: [],
+       statistics: {},
        accountDetails: {
            description: null,
            type: null
@@ -218,6 +215,7 @@ export default {
       }).then(result => {
         if(result.isConfirmed) {
           deleteTransaction(store.getters.userData.user_id,route.params.id, transactionId, data)
+          getAccountPeriodStatistic(store.getters.userData.user_id, route.params.id, data)
         }
       })
     }
@@ -253,26 +251,12 @@ export default {
          return (sal / 100).toLocaleString("pt-BR", {style: "currency", currency: "BRL"})
     })
 
-    const IsNegativeAmount = computed(() => {
-      let receita = 0;
-      let despesa = 0;
-      let statics = data.statistics.reverse()
-      for(let i = 0; i<statics.length;i++) {
-        if(statics[i].description === "Despesa") {
-          despesa = statics[i].total * -1
-        }else{
-          receita = statics[i].total
-        }
-      }
-      let sal = receita + (despesa)
-      return sal < 0
-    })
-
     const searchFilter = () => {
         if(data.filters.range == null) {
             showAlert("Preencha os filtros de data", "error")
             return
         }
+        getAccountPeriodStatistic(store.getters.userData.user_id, route.params.id, data)
         getAccountTransactions(store.getters.userData.user_id, route.params.id, data)
     }
 
@@ -290,6 +274,7 @@ export default {
         data.filters.range = range
       }
 
+      getAccountPeriodStatistic(store.getters.userData.user_id, route.params.id, data)
       getAccountDetail(store.getters.userData.user_id, route.params.id, data)
       getAccountTransactions(store.getters.userData.user_id, route.params.id, data)
     })
@@ -303,7 +288,6 @@ export default {
        deletePrompt,
        openForm,
        calculatedAmount,
-       IsNegativeAmount,
        searchFilter
     }
 

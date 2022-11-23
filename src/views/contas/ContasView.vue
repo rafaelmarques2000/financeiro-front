@@ -25,6 +25,7 @@
                               <select @change="changeLimitPerPage" v-model="data.pagination.limit" class="form-select show-pages">
                                    <option value="5">5</option>
                                    <option value="10">10</option>
+                                   <option value="15">15</option>
                                    <option value="50">50</option>
                                    <option value="100">100</option>
                               </select>
@@ -129,6 +130,7 @@ import PageTitle from "@/components/PageTitle";
 import NoContent from "@/components/NoContent";
 import Swal from 'sweetalert2'
 import store from "@/store"
+import {getAccountPeriodGeneralStatistic} from "@/service/http/accountStatisticService";
 
 
 export default {
@@ -140,13 +142,14 @@ export default {
       const data = reactive({
          contas : [],
          isOpenFilter: true,
+         statistics: {},
          filters: {
             range: null,
             description: null
          },
          pagination : {
            pages: [],
-           limit: 10,
+           limit: 15,
            current_page:1,
            totalPages: 0,
            totalRows: 0
@@ -188,6 +191,7 @@ export default {
         }).then(result => {
              if(result.isConfirmed) {
                  deleteAccount(store.getters.userData.user_id,accountId, data)
+                 getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data)
              }
         })
       }
@@ -224,6 +228,7 @@ export default {
            return;
         }
         store.commit("setDateFilterRange", data.filters.range)
+        getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data)
         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       }
 
@@ -235,27 +240,12 @@ export default {
       }
 
       const totalAmountAccounts = computed(() => {
-         let amount = 0;
-         data.contas.forEach((item) => {
-             if(item.amount < 0){
-                amount-=item.amount*-1;
-             }else{
-               amount+=item.amount;
-             }
-         })
-         return amount.toLocaleString("pt-BR", {style: "currency", currency :"BRL"});
+         let total = data.statistics.period_amount /100;
+         return total.toLocaleString("pt-BR", {style: "currency", currency :"BRL"});
       })
 
       const isNegativeAmount = computed(() => {
-        let amount = 0;
-        data.contas.forEach((item) => {
-          if(item.amount < 0){
-            amount-=item.amount*-1;
-          }else{
-            amount+=item.amount;
-          }
-        })
-         return amount < 0;
+         return data.statistics.period_amount < 0;
       })
 
       onMounted(() => {
@@ -271,6 +261,7 @@ export default {
           store.commit('setDateFilterRange', range)
           data.filters.range = range
         }
+        getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data)
         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       })
 

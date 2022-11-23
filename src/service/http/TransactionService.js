@@ -27,7 +27,6 @@ const getAccountTransactions = (userId, accountId, data) => {
         data.pagination.totalPages = result.data.total_pages
         data.pagination.totalRows = result.data.total_rows
         data.transactions = result.data.items
-        data.statistics = result.data.statistic.reverse()
     }).catch(error => {
         Swal.close()
         showAlert("Falha ao obter transações", 'error');
