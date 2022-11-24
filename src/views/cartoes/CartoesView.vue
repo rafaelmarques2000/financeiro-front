@@ -4,9 +4,9 @@
                  <div class="col-12">
                       <div class="card page-card">
                         <page-title
-                            title="Contas"
-                            page-icon="fa-solid fa-receipt"
-                            subtitle="Gerencie suas contas"
+                            title="Cartões"
+                            page-icon="fa-solid fa-credit-card"
+                            subtitle="Gerencie seus cartões de credito/debito"
                             style="padding: 20px"
                         ></page-title>
                         <div class="alert alert-primary label-top">
@@ -158,7 +158,7 @@ export default {
 
       watch(() => data.contas , (contas) => {
           if(data.pagination.current_page > 1 && contas.length === 0) {
-            listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page - 1, data)
+            listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page - 1, data, true)
           }
           data.pagination.pages = generatePagesArray(data.pagination.current_page, data.pagination.totalRows, data.pagination.limit, 8)
       })
@@ -173,16 +173,16 @@ export default {
 
       let openForm = (id) => {
          if(id != null) {
-           router.push({name: "contas-form-edit", params:{id}})
+           router.push({name: "cartoes-form-edit", params:{id}})
            return
          }
-         router.push({name: "contas-form"})
+         router.push({name: "cartoes-form"})
       }
 
       let deletePrompt = (descricaoConta, accountId) => {
         Swal.fire({
           title: 'Confirmação',
-          text: `Deseja deletar a conta ${descricaoConta}?`,
+          text: `Deseja deletar o cartão ${descricaoConta}?`,
           icon: 'question',
           showConfirmButton: true,
           confirmButtonText: "Sim",
@@ -190,8 +190,8 @@ export default {
           cancelButtonText: "Não",
         }).then(result => {
              if(result.isConfirmed) {
-                 deleteAccount(store.getters.userData.user_id,accountId, data)
-                 getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data)
+                 deleteAccount(store.getters.userData.user_id,accountId, data, true)
+                 getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data , true)
              }
         })
       }
@@ -200,7 +200,7 @@ export default {
           if(direction === 'prev') {
             if(data.pagination.current_page > 1) {
                data.pagination.current_page -=1
-               listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
+               listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data , true)
                return;
             }
           }
@@ -210,16 +210,16 @@ export default {
               return
             }
             data.pagination.current_page +=1
-            listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
+            listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data, true)
           }
       }
 
       const changeLimitPerPage = () => {
-        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
+        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data, true)
       }
 
       const linkNavigationPage = (page) => {
-        listAll(store.getters.userData.user_id, data.pagination.limit, page, data)
+        listAll(store.getters.userData.user_id, data.pagination.limit, page, data, true)
       }
 
       const searchFilter = () => {
@@ -229,11 +229,11 @@ export default {
         }
         store.commit("setDateFilterRange", data.filters.range)
         getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data)
-        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
+        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data, true)
       }
 
       const openTransactions = (id, description) => {
-        store.commit("setLastRoute", "contas")
+        store.commit("setLastRoute", "cartoes")
         router.push({
           name:"conta-transaction",
           params: {id}
@@ -249,7 +249,7 @@ export default {
          return data.statistics.period_amount < 0;
       })
 
-      onMounted(() => {
+      onMounted(async () => {
         const now = new Date();
         const range = {
            start: new Date(now.getFullYear(), now.getMonth(), 1),
@@ -262,8 +262,8 @@ export default {
           store.commit('setDateFilterRange', range)
           data.filters.range = range
         }
-        getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data)
-        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
+        getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data, true)
+        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data, true)
       })
 
       return {

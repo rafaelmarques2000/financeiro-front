@@ -26,7 +26,9 @@ import {
     faSackDollar,
     faSearch,
     faTrash,
-    faArrowLeft, faArrowRight
+    faArrowLeft,
+    faArrowRight,
+    faCreditCard
 } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
@@ -42,7 +44,8 @@ library.add(
     faTrash,
     faSearch,
     faArrowLeft,
-    faArrowRight
+    faArrowRight,
+    faCreditCard
 )
 
 import VCalendar from 'v-calendar';

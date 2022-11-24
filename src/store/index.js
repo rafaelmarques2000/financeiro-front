@@ -36,6 +36,7 @@ export default createStore({
       isAuth: false,
       userData: {},
       metadata: {},
+      lastRoute: null,
       filters: {
           range: null
       }
@@ -58,6 +59,9 @@ export default createStore({
      },
      getDateFilterRange(state) {
          return state.filters.range
+     },
+     getLastRoute(state) {
+         return state.lastRoute
      }
   },
   mutations: {
@@ -88,6 +92,9 @@ export default createStore({
      },
      setDateFilterRange(state, range) {
           state.filters.range = range
+     },
+     setLastRoute(state, route) {
+          state.lastRoute = route
      }
   },
   plugins: [vuexLocal.plugin]

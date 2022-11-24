@@ -1,7 +1,7 @@
 <template>
   <div class="page-view page-content">
 
-     <router-link class="btn btn-primary btn-primary-custom" to="/app/contas"><font-awesome-icon icon="fa-solid fa-arrow-left" /> Voltar</router-link>
+     <router-link class="btn btn-primary btn-primary-custom" :to="`/app/${data.lastRoute}`"><font-awesome-icon icon="fa-solid fa-arrow-left" /> Voltar</router-link>
      <div class="card page-card">
          <page-title
              :title="`Transações - ${data.accountDetails.description}`"
@@ -150,6 +150,7 @@ export default {
     let data = reactive({
        transactions:[],
        statistics: {},
+       lastRoute: null,
        accountDetails: {
            description: null,
            type: null
@@ -273,7 +274,7 @@ export default {
         store.commit('setDateFilterRange', range)
         data.filters.range = range
       }
-
+      data.lastRoute = store.getters.getLastRoute
       getAccountPeriodStatistic(store.getters.userData.user_id, route.params.id, data)
       getAccountDetail(store.getters.userData.user_id, route.params.id, data)
       getAccountTransactions(store.getters.userData.user_id, route.params.id, data)

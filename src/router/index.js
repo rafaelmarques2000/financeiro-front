@@ -8,6 +8,8 @@ import store from "@/store";
 import {checkValidToken} from "@/service/http/authService";
 import Transaction from "@/views/transacoes/Transaction";
 import TransactionFormView from "@/views/transacoes/TransactionFormView";
+import CartoesView from "@/views/cartoes/CartoesView";
+import CartoesFormView from "@/views/cartoes/CartoesFormView";
 
 const routes = [
   {
@@ -56,6 +58,21 @@ const routes = [
         name: 'conta-transaction-edit',
         component: TransactionFormView
       },
+      {
+        path: '/app/cartoes',
+        name: 'cartoes',
+        component: CartoesView
+      },
+      {
+        path: '/app/cartoes/new',
+        name: 'cartoes-form',
+        component: CartoesFormView
+      },
+      {
+        path: '/app/contas/cartoes/:id',
+        name: 'cartoes-form-edit',
+        component: CartoesFormView
+      },
     ]
   },
 ]
@@ -68,7 +85,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from) => {
-    if(to.name != 'login') {
+    if(to.name !== 'login') {
        let user = store.getters.userData;
 
        if(!store.getters.isAuth) {

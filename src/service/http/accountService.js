@@ -3,12 +3,22 @@ import {showAlert, showLoading} from "@/service/utils/alertsService";
 import Swal from "sweetalert2";
 import {formatDate} from "@/service/utils/date";
 
-const listAll = (userId, limit, page, data) => {
+const listAll = (userId, limit, page, data, isCreditCard) => {
     showLoading()
     let url = `/users/${userId}/accounts?limit=${limit}&page=${page}`
 
     if(data.filters.description != null) {
        url = url.concat(`&description=${data.filters.description}`)
+    }
+
+    if(isCreditCard) {
+        url = url.concat(`&account_types[]=cartao_credito`)
+    }
+
+    if(!isCreditCard) {
+        url = url.concat(`&account_types[]=conta_corrente`)
+        url = url.concat(`&account_types[]=poupanca_reserva`)
+        url = url.concat(`&account_types[]=investimento`)
     }
 
     url = url.concat(`&initial_date=${formatDate(data.filters.range.start)}&end_date=${formatDate(data.filters.range.end)}`)
@@ -21,7 +31,7 @@ const listAll = (userId, limit, page, data) => {
         data.contas = result.data.items
     }).catch(error => {
         Swal.close()
-        showAlert("Falha ao obter lista de contas", 'error');
+        showAlert("Falha ao obter lista de dados", 'error');
     })
 }
 
@@ -32,47 +42,47 @@ const getAccountById = (userId, accountId, data) => {
       data.account.account_type_id = result.data.accountType.id
     }).catch(error => {
         Swal.close()
-        showAlert("Falha ao obter dados da conta", 'error');
+        showAlert("Falha ao obter dados", 'error');
     })
 }
 
-const saveAccount = (userId, data , router) => {
+const saveAccount = (userId, data , router, redirectName) => {
     showLoading()
     httpService.post(`/users/${userId}/accounts`, data.account).then(result => {
-        showAlert("Conta cadastrada com sucesso!", 'success').then(result => {
+        showAlert("Cadastro Realizado com sucesso!", 'success').then(result => {
              if(result.isConfirmed) {
-                 router.push({name: "contas"})
+                 router.push({name: redirectName})
              }
         })
     }).catch(error => {
         Swal.close()
-        showAlert("Falha ao cadastrar conta!", 'error');
+        showAlert("Falha ao realizar cadastro", 'error');
     })
 }
 
-const updateAccount = (userId,accountId,router,data) => {
+const updateAccount = (userId,accountId,router,data , redirectName) => {
     showLoading()
     httpService.put(`/users/${userId}/accounts/${accountId}`, data.account).then(result => {
-        showAlert("Conta atualizada com sucesso!", 'success').then(result => {
+        showAlert("Atualização realizada com sucesso!", 'success').then(result => {
             if(result.isConfirmed) {
-                router.push({name: "contas"})
+                router.push({name: redirectName})
             }
         })
     }).catch(error => {
         Swal.close()
-        showAlert("Falha ao atualizar conta", 'error');
+        showAlert("Falha ao realizar atualização", 'error');
     })
 }
 
-const deleteAccount = (userId, accountId, data) => {
+const deleteAccount = (userId, accountId, data , isCreditCard) => {
     showLoading()
     return httpService.delete(`/users/${userId}/accounts/${accountId}`).then(result => {
         Swal.close()
-        listAll(userId, data.pagination.limit, data.pagination.current_page, data)
+        listAll(userId, data.pagination.limit, data.pagination.current_page, data , isCreditCard)
     }).catch(error => {
         console.log(error)
         Swal.close()
-        showAlert('Falha ao deletar conta', 'error')
+        showAlert('Falha ao deletar registro', 'error')
     })
 }
 

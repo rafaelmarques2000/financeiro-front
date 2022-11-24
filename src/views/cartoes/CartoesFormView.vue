@@ -1,7 +1,7 @@
 <template>
 
     <div class="conta-form-view page-content">
-      <router-link class="btn btn-primary btn-primary-custom" to="/app/contas"><font-awesome-icon icon="fa-solid fa-arrow-left" /> Voltar</router-link>
+      <router-link class="btn btn-primary btn-primary-custom" to="/app/cartoes"><font-awesome-icon icon="fa-solid fa-arrow-left" /> Voltar</router-link>
       <div class="row">
                  <div class="col-12">
                       <div class="card form-page-card">
@@ -19,8 +19,7 @@
 
                                   <div class="mb-3">
                                     <label for="accounttype" class="form-label">Tipo de conta</label>
-                                    <select class="form-select" v-model="data.account.account_type_id" aria-label="Default select example">
-                                      <option value="">Selecione um tipo de conta</option>
+                                    <select disabled class="form-select" v-model="data.account.account_type_id">
                                       <option v-for="item in data.accountTypes" :value="item.id">{{item.description}}</option>
                                     </select>
                                   </div>
@@ -39,7 +38,7 @@
 
 <script>
 
-import {nextTick, onMounted, reactive} from "vue";
+import {onMounted, reactive, nextTick} from "vue";
 import PageTitle from "@/components/PageTitle";
 import { useRoute, useRouter } from 'vue-router'
 import Swal from "sweetalert2";
@@ -65,7 +64,7 @@ export default {
       })
 
       const backPage = () => {
-          router.push({name: "contas"})
+          router.push({name: "cartoes"})
       }
 
       const submit = () => {
@@ -80,25 +79,25 @@ export default {
         }
 
       if(route.params.id == null) {
-         saveAccount(store.getters.userData.user_id, data, router , 'contas')
+         saveAccount(store.getters.userData.user_id, data, router, 'cartoes')
          return;
        }
-       updateAccount(store.getters.userData.user_id, route.params.id, router, data, 'contas');
+       updateAccount(store.getters.userData.user_id, route.params.id, router, data, 'cartoes');
       }
 
       onMounted(async () => {
-          await nextTick()
-          await listAccountTypes(data)
-          data.accountTypes = data.accountTypes.filter( item => item.slug_name !== 'cartao_credito')
+         await listAccountTypes(data)
+         await nextTick()
+         data.account.account_type_id = data.accountTypes.filter(item => item.slug_name === 'cartao_credito')[0].id
 
         if(route.params.id != null) {
-             data.pageTitle = "Editar conta"
-             data.subtitle = "Edite sua conta"
+             data.pageTitle = "Editar Cartão"
+             data.subtitle = "Edite seu cartão"
              getAccountById(store.getters.userData.user_id,route.params.id, data)
              return
           }
-          data.pageTitle = "Nova conta"
-          data.subtitle="Preencha o formulário abaixo para criar uma nova conta";
+          data.pageTitle = "Novo Cartão"
+          data.subtitle="Preencha o formulário abaixo para criar uma novo cartão";
       })
 
       return {
