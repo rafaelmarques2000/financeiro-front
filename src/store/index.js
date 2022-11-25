@@ -38,7 +38,8 @@ export default createStore({
       metadata: {},
       lastRoute: null,
       filters: {
-          range: null
+          range: null,
+          description: null
       }
   },
   getters: {
@@ -60,6 +61,9 @@ export default createStore({
      getDateFilterRange(state) {
          return state.filters.range
      },
+     getFilterDescription(state) {
+          return state.filters.description
+     },
      getLastRoute(state) {
          return state.lastRoute
      }
@@ -78,7 +82,8 @@ export default createStore({
         state.isAuth = false
         state.userData = {}
         state.filters = {
-            range: null
+            range: null,
+            description: null
         }
      },
      setMetadata(state, payload) {
@@ -92,6 +97,9 @@ export default createStore({
      },
      setDateFilterRange(state, range) {
           state.filters.range = range
+     },
+     setFilterDescription(state, description) {
+          state.filters.description = description
      },
      setLastRoute(state, route) {
           state.lastRoute = route

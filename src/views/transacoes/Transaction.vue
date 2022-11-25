@@ -257,6 +257,8 @@ export default {
             showAlert("Preencha os filtros de data", "error")
             return
         }
+        store.commit('setDateFilterRange', data.filters.range)
+        store.commit('setFilterDescription', data.filters.description)
         getAccountPeriodStatistic(store.getters.userData.user_id, route.params.id, data)
         getAccountTransactions(store.getters.userData.user_id, route.params.id, data)
     }
@@ -270,8 +272,10 @@ export default {
 
       if(store.getters.getDateFilterRange != null) {
         data.filters.range = store.getters.getDateFilterRange
+        data.filters.description = store.getters.getFilterDescription
       }else {
         store.commit('setDateFilterRange', range)
+        store.commit('setFilterDescription', data.filters.description)
         data.filters.range = range
       }
       data.lastRoute = store.getters.getLastRoute

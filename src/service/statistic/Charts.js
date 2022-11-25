@@ -23,6 +23,15 @@ const generateChartExpensePerCategory = async (data) => {
                 ratio: 0.3
             }
         },
+        tooltip: {
+            init: {
+                show: true
+            },
+            doNotHide: false,
+            contents: {
+                template: "<ul>{{<li class={=CLASS_TOOLTIP_NAME}><span>{=VALUE}</span><br><span style=color:{=COLOR}>{=NAME}</span></li>}}<li>{=TITLE}</li></ul>"
+            }
+        },
         legend: {
             show: true,
             position: "right"

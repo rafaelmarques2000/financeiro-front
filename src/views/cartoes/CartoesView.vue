@@ -12,7 +12,7 @@
                         <div class="alert alert-primary label-top">
                           <div class="row">
                             <div class="col-3">
-                              <h4 class="tipo-transacao-label">Resultado do mês</h4>
+                              <h4 class="tipo-transacao-label">Saldo total</h4>
                               <span v-if="isNegativeAmount" class="value-label negative-label">{{totalAmountAccounts}}</span>
                               <span v-else class="value-label positive-label">{{totalAmountAccounts}}</span>
                             </div>

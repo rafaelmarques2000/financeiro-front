@@ -55,7 +55,7 @@
                      <div v-else v-for="item in data.dashboard.expensePerCategoryData" class="categories-progress">
                        <h4>{{item.description}} - {{ formatMoneyBRL(item.amount) }}</h4>
                        <div class="progress" style="height: 20px;">
-                         <div class="progress-bar progress-bar-animated" role="progressbar" :style="`width: ${item.percentage}%; background:${data.dashboard.expensePerCategoryColors[item.description]}`" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                         <div class="progress-bar bar-animate" role="progressbar" :style="`width: ${item.percentage}%; background:${data.dashboard.expensePerCategoryColors[item.description]}`" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                        </div>
                      </div>
 

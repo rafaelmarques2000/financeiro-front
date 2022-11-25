@@ -19,7 +19,11 @@
 
         </nav>
         <div class="content-center">
-             <router-view></router-view>
+          <router-view v-slot="{ Component }">
+            <transition name="slideback">
+               <component :is="Component" />
+            </transition>
+          </router-view>
         </div>
     </div>
   </div>

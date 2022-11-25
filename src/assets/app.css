@@ -246,3 +246,28 @@ body {
     padding: 26px;
     justify-content: flex-end;
 }
+
+.bb-tooltip-container {
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.bar-animate {
+    transition: width .5s;
+}
+
+
+.slideback-leave-active {
+    transition: .5s;
+}
+.slideback-enter-active {
+    transition: .5s;
+}
+.slideback-enter {
+    transform: translate(100%, 0);
+}
+.slideback-leave-to {
+    transform: translate(-100%, 0);
+}
