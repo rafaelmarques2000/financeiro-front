@@ -1,7 +1,7 @@
 <template>
 
     <div class="conta-form-view page-content">
-      <router-link class="btn btn-primary btn-primary-custom" to="/app/cartoes"><font-awesome-icon icon="fa-solid fa-arrow-left" /> Voltar</router-link>
+      <router-link class="btn btn-primary btn-primary-custom" to="/app/poupanca"><font-awesome-icon icon="fa-solid fa-arrow-left" /> Voltar</router-link>
       <div class="row">
                  <div class="col-12">
                       <div class="card form-page-card">

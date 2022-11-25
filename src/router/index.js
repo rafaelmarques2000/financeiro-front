@@ -12,6 +12,7 @@ import CartoesView from "@/views/cartoes/CartoesView";
 import CartoesFormView from "@/views/cartoes/CartoesFormView";
 import PoupancaView from "@/views/poupanca/PoupancaView";
 import PoupancaFormView from "@/views/poupanca/PoupancaFormView";
+import {ReactiveData} from "@/service/utils/homedata";
 
 const routes = [
   {
@@ -29,21 +30,33 @@ const routes = [
         path: '/app/dashboard',
         name: 'dashboard',
         component: InicioView,
+        meta: {
+          page: "dashboard"
+        }
       },
       {
         path: '/app/contas',
         name: 'contas',
-        component: ContasView
+        component: ContasView,
+        meta: {
+           page: "contas"
+        }
       },
       {
         path: '/app/contas/new',
         name: 'contas-form',
-        component: ContaForm
+        component: ContaForm,
+        meta: {
+          page: "contas"
+        }
       },
       {
         path: '/app/contas/edit/:id',
         name: 'contas-form-edit',
-        component: ContaForm
+        component: ContaForm,
+        meta: {
+          page: "contas"
+        }
       },
       {
         path: '/app/conta/:id/transaction',
@@ -63,32 +76,50 @@ const routes = [
       {
         path: '/app/cartoes',
         name: 'cartoes',
-        component: CartoesView
+        component: CartoesView,
+        meta: {
+          page: "cartoes"
+        }
       },
       {
         path: '/app/cartoes/new',
         name: 'cartoes-form',
-        component: CartoesFormView
+        component: CartoesFormView,
+        meta: {
+          page: "cartoes"
+        }
       },
       {
         path: '/app/contas/cartoes/:id',
         name: 'cartoes-form-edit',
-        component: CartoesFormView
+        component: CartoesFormView,
+        meta: {
+          page: "cartoes"
+        }
       },
       {
         path: '/app/poupanca',
         name: 'poupanca',
-        component: PoupancaView
+        component: PoupancaView,
+        meta: {
+          page: "poupanca"
+        }
       },
       {
         path: '/app/poupanca/new',
         name: 'poupanca-form',
-        component: PoupancaFormView
+        component: PoupancaFormView,
+        meta: {
+          page: "poupanca"
+        }
       },
       {
         path: '/app/poupanca/edit/:id',
         name: 'poupanca-form-edit',
-        component: PoupancaFormView
+        component: PoupancaFormView,
+        meta: {
+          page: "poupanca"
+        }
       },
     ]
   },
@@ -96,9 +127,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes,
-  linkActiveClass: "active",
-  linkExactActiveClass: "active"
+  routes
 })
 
 router.beforeEach((to, from) => {
@@ -113,7 +142,9 @@ router.beforeEach((to, from) => {
          return router.push({name: "login"})
        }
 
-      checkValidToken(user.token).then(result => {}).catch(error => {
+      checkValidToken(user.token).then(result => {
+        ReactiveData.page = to.meta.page
+      }).catch(error => {
          store.commit("clearState")
          return router.push({name: "login"})
       })

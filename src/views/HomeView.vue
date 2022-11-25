@@ -6,10 +6,10 @@
            </div>
            <nav class="sidebar-menu">
                <ul>
-                 <li><router-link to="/app/dashboard"><font-awesome-icon icon="fa-solid fa-house" /> Inicio</router-link></li>
-                 <li><router-link to="/app/contas"><font-awesome-icon icon="fa-solid fa-receipt" /> Contas corrente</router-link></li>
-                 <li><router-link to="/app/cartoes"><font-awesome-icon icon="fa-solid fa-credit-card" /> Cartões</router-link></li>
-                 <li><router-link to="/app/poupanca"><font-awesome-icon icon="fa-solid fa-sack-dollar" /> Poupança/Investimento</router-link></li>
+                 <li><router-link to="/app/dashboard" :class="{'active': ReactiveData.page === 'dashboard'}"><font-awesome-icon icon="fa-solid fa-house" /> Inicio</router-link></li>
+                 <li><router-link to="/app/contas"    :class="{'active': ReactiveData.page === 'contas'}"><font-awesome-icon icon="fa-solid fa-receipt" /> Contas corrente</router-link></li>
+                 <li><router-link to="/app/cartoes"   :class="{'active': ReactiveData.page === 'cartoes'}"><font-awesome-icon icon="fa-solid fa-credit-card" /> Cartões</router-link></li>
+                 <li><router-link to="/app/poupanca"  :class="{'active': ReactiveData.page === 'poupanca'}"><font-awesome-icon icon="fa-solid fa-sack-dollar" /> Poupança/Investimento</router-link></li>
                  <li><a href="" @click.prevent="confirmAppExit"><font-awesome-icon icon="fa-solid fa-right-from-bracket" /> Sair</a></li>
                </ul>
            </nav>
@@ -27,19 +27,17 @@
 
 <script>
 
-import { reactive } from "vue";
+import {reactive} from "vue";
 import Swal from "sweetalert2";
-import {useRouter} from "vue-router/dist/vue-router";
 import store from "@/store"
+import {useRoute, useRouter} from "vue-router";
+import {ReactiveData} from "@/service/utils/homedata";
 
 export default {
     setup() {
 
       const router = useRouter()
-
-      const data = reactive({
-          msg: "hello"
-      })
+      const route = useRoute()
 
       const confirmAppExit = () => {
         Swal.fire({
@@ -58,9 +56,8 @@ export default {
         })
       }
 
-
       return {
-          data,
+          ReactiveData,
           confirmAppExit
       }
 

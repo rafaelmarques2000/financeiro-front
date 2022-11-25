@@ -55,14 +55,18 @@
                                     </div>
                                     <div class="col-1" v-if="!data.disableInstallment">
                                       <label for="parcelas" class="form-label">Parcelas</label>
-                                      <input type="text" v-model="data.transaction.amount_installments" class="form-control" :disabled="data.selectStates.installmentDisable" id="parcelas" placeholder="Parcelas">
+                                      <input type="text" @change="simulateInstallmentsAmount" v-model="data.transaction.amount_installments" class="form-control" :disabled="data.selectStates.installmentDisable" id="parcelas" placeholder="Parcelas">
+                                    </div>
+                                    <div class="col-2" v-if="!data.disableInstallment">
+                                      <label for="valor_parcela" class="form-label">Valor parcela</label>
+                                      <CurrencyInput :options="{ currency: 'BRL' }" v-model="data.simulateInstallment" disabled class="form-control"></CurrencyInput>
                                     </div>
                                   </div>
 
                                  <div class="row">
                                     <div class="mb-3">
                                         <button style="margin-right: 10px" @click="submit(false)" type="button" class="btn btn-primary btn-primary-custom">Salvar</button>
-                                        <button style="margin-right: 10px" v-if="data.page.transactionId == null" @click="submit(true)" type="button" class="btn btn-primary btn-primary-custom">Salvar e continuar</button>
+                                        <button style="margin-right: 10px" v-if="isShowSaveAndContinueButton" @click="submit(true)" type="button" class="btn btn-primary btn-primary-custom">Salvar e continuar</button>
                                         <button type="button" @click="backPage" class="btn btn-secondary">Cancelar</button>
                                     </div>
                                  </div>
@@ -77,7 +81,7 @@
 
 <script>
 
-import {onMounted, reactive, watch} from "vue";
+import {onMounted, reactive, watch, computed} from "vue";
 import PageTitle from "@/components/PageTitle";
 import {useRoute, useRouter} from 'vue-router'
 import store from "@/store"
@@ -96,7 +100,7 @@ export default {
 
       const data = reactive({
           page: {
-              transactionId: route.params.id
+              transactionId: route.params.id_transaction
           },
           pageTitle: "",
           subtitle: "",
@@ -110,6 +114,7 @@ export default {
             categoryDisable: true,
             installmentDisable: true
           },
+          simulateInstallment: 0,
           transaction: {
              description: "",
              date: "",
@@ -169,6 +174,14 @@ export default {
           data.selectStates.installmentDisable = true
       })
 
+      const isShowSaveAndContinueButton = computed(() => {
+          return data.page.transactionId == null
+      })
+
+      const simulateInstallmentsAmount = () => {
+          data.simulateInstallment  = data.transaction.amount / data.transaction.amount_installments
+      }
+
       onMounted(() => {
           listTransactionType(data)
           if(route.params.id_transaction != null) {
@@ -186,7 +199,9 @@ export default {
       return {
           data,
           backPage,
-          submit
+          submit,
+          isShowSaveAndContinueButton,
+          simulateInstallmentsAmount
       }
     }
  }

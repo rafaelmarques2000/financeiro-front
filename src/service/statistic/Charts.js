@@ -29,15 +29,17 @@ const generateChartExpensePerCategory = async (data) => {
         },
         bindto: "#bar-chart"
     }
-
+    let chart = bb.generate(options);
     if(expenses.data.length !== 0) {
-        let chart = bb.generate(options);
         chart.resize({width: 600, height:350})
         data.dashboard.expensePerCategoryColors = chart.data.colors()
+        console.log('show')
         return chart
     }else {
         data.dashboard.expensePerCategoryData = null
         data.dashboard.expensePerCategoryColors = null
+        chart.destroy()
+        console.log('aqui')
     }
 }
 

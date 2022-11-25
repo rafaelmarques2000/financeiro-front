@@ -8,8 +8,30 @@
                             subtitle="Acompanhe aqui a evolução das suas finanças."
                 />
               </div>
-              <div class="col-6" style="display: flex">
-
+              <div class="col-6 home-filter" >
+                <v-date-picker
+                    v-model="data.filters.range"
+                    mode="date"
+                    is-range
+                >
+                  <template v-slot="{ inputValue, inputEvents, isDragging }">
+                    <div style="display: flex">
+                      <input class="form-control" style="margin-right: 10px"
+                             :value="inputValue.start"
+                             v-on="inputEvents.start"
+                      />
+                      <span style="padding: 10px">até</span>
+                      <input disabled
+                             class="form-control"
+                             :value="inputValue.end"
+                             v-on="inputEvents.end"
+                      />
+                    </div>
+                  </template>
+                </v-date-picker>
+                <button type="button" @click="searchFilter" style="margin-left: 13px; height: 36px;" class="btn btn-primary btn-primary-custom">
+                  <font-awesome-icon icon="fa-solid fa-search"></font-awesome-icon>
+                </button>
               </div>
           </div>
 
@@ -42,19 +64,18 @@
                </div>
              </div>
            </div>
-
-
   </div>
 </template>
 
 <script>
 
-import { reactive, onMounted, ref } from "vue";
+import {onMounted, reactive} from "vue";
 import pageTitle from "@/components/PageTitle";
 import store from "@/store";
 import {generateChartExpensePerCategory} from "@/service/statistic/Charts";
 import {formatMoneyBRL} from "@/service/utils/helpers";
 import NoContent from "@/components/NoContent";
+
 export default {
     components: {NoContent, pageTitle},
     setup() {
@@ -62,7 +83,8 @@ export default {
         user_show_name: store.getters.userData.show_name,
         filters: {
            initialDate: "",
-           endDate: ""
+           endDate: "",
+           range: null
         },
         dashboard: {
           expensePerCategoryData: null,
@@ -70,15 +92,22 @@ export default {
         }
       })
 
+      const searchFilter = () => {
+         let chart = generateChartExpensePerCategory(data)
+      }
+
       onMounted(() => {
-          const now = new Date();
-          data.filters.initialDate = new Date(now.getFullYear(), now.getMonth(), 1)
-          data.filters.endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-          generateChartExpensePerCategory(data)
+        const now = new Date();
+        data.filters.range = {
+            start: new Date(now.getFullYear(), now.getMonth(), 1),
+            end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+        }
+        generateChartExpensePerCategory(data)
       })
 
       return {
           data,
+          searchFilter,
           formatMoneyBRL
       }
     }

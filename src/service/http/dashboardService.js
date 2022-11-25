@@ -6,7 +6,7 @@ import {formatDate} from "@/service/utils/date";
 const getExpencePerCategory = async (userId, data) => {
     try {
         showLoading()
-        let url = `/users/${userId}/dashboard/expense-per-category?initial_date=${formatDate(data.filters.initialDate)}&end_date=${formatDate(data.filters.endDate)}`
+        let url = `/users/${userId}/dashboard/expense-per-category?initial_date=${formatDate(data.filters.range.start)}&end_date=${formatDate(data.filters.range.end)}`
         let request = await httpService.get(url)
         hiddenLoading()
         return request;
