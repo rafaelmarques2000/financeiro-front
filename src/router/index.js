@@ -10,6 +10,8 @@ import Transaction from "@/views/transacoes/Transaction";
 import TransactionFormView from "@/views/transacoes/TransactionFormView";
 import CartoesView from "@/views/cartoes/CartoesView";
 import CartoesFormView from "@/views/cartoes/CartoesFormView";
+import PoupancaView from "@/views/poupanca/PoupancaView";
+import PoupancaFormView from "@/views/poupanca/PoupancaFormView";
 
 const routes = [
   {
@@ -72,6 +74,21 @@ const routes = [
         path: '/app/contas/cartoes/:id',
         name: 'cartoes-form-edit',
         component: CartoesFormView
+      },
+      {
+        path: '/app/poupanca',
+        name: 'poupanca',
+        component: PoupancaView
+      },
+      {
+        path: '/app/poupanca/new',
+        name: 'poupanca-form',
+        component: PoupancaFormView
+      },
+      {
+        path: '/app/poupanca/edit/:id',
+        name: 'poupanca-form-edit',
+        component: PoupancaFormView
       },
     ]
   },

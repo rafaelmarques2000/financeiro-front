@@ -3,7 +3,7 @@ import {showAlert, showLoading} from "@/service/utils/alertsService";
 import Swal from "sweetalert2";
 import {formatDate} from "@/service/utils/date";
 
-const listAll = (userId, limit, page, data, isCreditCard) => {
+const listAll = (userId, limit, page, data) => {
     showLoading()
     let url = `/users/${userId}/accounts?limit=${limit}&page=${page}`
 
@@ -11,12 +11,15 @@ const listAll = (userId, limit, page, data, isCreditCard) => {
        url = url.concat(`&description=${data.filters.description}`)
     }
 
-    if(isCreditCard) {
+    if(data.listFilter.isCreditCard) {
         url = url.concat(`&account_types[]=cartao_credito`)
     }
 
-    if(!isCreditCard) {
+    if(data.listFilter.isConta) {
         url = url.concat(`&account_types[]=conta_corrente`)
+    }
+
+    if(data.listFilter.isReserva) {
         url = url.concat(`&account_types[]=poupanca_reserva`)
         url = url.concat(`&account_types[]=investimento`)
     }

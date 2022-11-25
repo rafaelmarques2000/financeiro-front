@@ -4,9 +4,9 @@
                  <div class="col-12">
                       <div class="card page-card">
                         <page-title
-                            title="Cartões"
+                            title="Cartões de credito"
                             page-icon="fa-solid fa-credit-card"
-                            subtitle="Gerencie seus cartões de credito/debito"
+                            subtitle="Gerencie seus cartões"
                             style="padding: 20px"
                         ></page-title>
                         <div class="alert alert-primary label-top">
@@ -54,7 +54,7 @@
                                            v-on="inputEvents.start"
                                        />
                                        <span style="padding: 10px">até</span>
-                                       <input
+                                       <input disabled
                                            class="form-control"
                                            :value="inputValue.end"
                                            v-on="inputEvents.end"
@@ -143,6 +143,11 @@ export default {
          contas : [],
          isOpenFilter: true,
          statistics: {},
+         listFilter: {
+          isCreditCard: true,
+          isConta: false,
+          isReserva: false
+         },
          filters: {
             range: null,
             description: null
@@ -158,7 +163,7 @@ export default {
 
       watch(() => data.contas , (contas) => {
           if(data.pagination.current_page > 1 && contas.length === 0) {
-            listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page - 1, data, true)
+            listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page - 1, data)
           }
           data.pagination.pages = generatePagesArray(data.pagination.current_page, data.pagination.totalRows, data.pagination.limit, 8)
       })
@@ -182,7 +187,7 @@ export default {
       let deletePrompt = (descricaoConta, accountId) => {
         Swal.fire({
           title: 'Confirmação',
-          text: `Deseja deletar o cartão ${descricaoConta}?`,
+          text: `Deseja deletar a conta ${descricaoConta}?`,
           icon: 'question',
           showConfirmButton: true,
           confirmButtonText: "Sim",
@@ -190,8 +195,8 @@ export default {
           cancelButtonText: "Não",
         }).then(result => {
              if(result.isConfirmed) {
-                 deleteAccount(store.getters.userData.user_id,accountId, data, true)
-                 getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data , true)
+                 deleteAccount(store.getters.userData.user_id,accountId, data)
+                 getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data)
              }
         })
       }
@@ -200,7 +205,7 @@ export default {
           if(direction === 'prev') {
             if(data.pagination.current_page > 1) {
                data.pagination.current_page -=1
-               listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data , true)
+               listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
                return;
             }
           }
@@ -210,16 +215,16 @@ export default {
               return
             }
             data.pagination.current_page +=1
-            listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data, true)
+            listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
           }
       }
 
       const changeLimitPerPage = () => {
-        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data, true)
+        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       }
 
       const linkNavigationPage = (page) => {
-        listAll(store.getters.userData.user_id, data.pagination.limit, page, data, true)
+        listAll(store.getters.userData.user_id, data.pagination.limit, page, data)
       }
 
       const searchFilter = () => {
@@ -229,11 +234,10 @@ export default {
         }
         store.commit("setDateFilterRange", data.filters.range)
         getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data)
-        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data, true)
+        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       }
 
       const openTransactions = (id, description) => {
-        store.commit("setLastRoute", "cartoes")
         router.push({
           name:"conta-transaction",
           params: {id}
@@ -262,8 +266,9 @@ export default {
           store.commit('setDateFilterRange', range)
           data.filters.range = range
         }
-        getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data, true)
-        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data, true)
+        store.commit("setLastRoute", "cartoes")
+        getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data)
+        listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       })
 
       return {

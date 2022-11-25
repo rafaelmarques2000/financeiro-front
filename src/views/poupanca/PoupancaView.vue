@@ -4,9 +4,9 @@
                  <div class="col-12">
                       <div class="card page-card">
                         <page-title
-                            title="Contas"
-                            page-icon="fa-solid fa-receipt"
-                            subtitle="Gerencie suas contas"
+                            title="Poupança/Investimento"
+                            page-icon="fa-solid fa-sack-dollar"
+                            subtitle="Gerencie sua reserva"
                             style="padding: 20px"
                         ></page-title>
                         <div class="alert alert-primary label-top">
@@ -145,9 +145,9 @@ export default {
          statistics: {},
          listFilter: {
             isCreditCard: false,
-            isConta: true,
-            isReserva: false
-         },
+            isConta: false,
+            isReserva: true
+        },
          filters: {
             range: null,
             description: null
@@ -178,10 +178,10 @@ export default {
 
       let openForm = (id) => {
          if(id != null) {
-           router.push({name: "contas-form-edit", params:{id}})
+           router.push({name: "poupanca-form-edit", params:{id}})
            return
          }
-         router.push({name: "contas-form"})
+         router.push({name: "poupanca-form"})
       }
 
       let deletePrompt = (descricaoConta, accountId) => {
@@ -238,6 +238,7 @@ export default {
       }
 
       const openTransactions = (id, description) => {
+        store.commit("setLastRoute", "poupanca")
         router.push({
           name:"conta-transaction",
           params: {id}
@@ -253,7 +254,7 @@ export default {
          return data.statistics.period_amount < 0;
       })
 
-      onMounted(() => {
+      onMounted(async () => {
         const now = new Date();
         const range = {
            start: new Date(now.getFullYear(), now.getMonth(), 1),
@@ -266,7 +267,7 @@ export default {
           store.commit('setDateFilterRange', range)
           data.filters.range = range
         }
-        store.commit("setLastRoute", "contas")
+        store.commit("setLastRoute", "poupanca")
         getAccountPeriodGeneralStatistic(store.getters.userData.user_id, data)
         listAll(store.getters.userData.user_id, data.pagination.limit, data.pagination.current_page, data)
       })

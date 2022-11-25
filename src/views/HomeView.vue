@@ -2,13 +2,14 @@
   <div class="home-view">
       <div class="sidebar">
            <div class="logo">
-             <h1>Sistema Financeiro</h1>
+             <h1><font-awesome-icon icon="fa-solid fa-sack-dollar"></font-awesome-icon> Graninha 2.0</h1>
            </div>
            <nav class="sidebar-menu">
                <ul>
                  <li><router-link to="/app/dashboard"><font-awesome-icon icon="fa-solid fa-house" /> Inicio</router-link></li>
-                 <li><router-link to="/app/contas"><font-awesome-icon icon="fa-solid fa-receipt" /> Contas</router-link></li>
+                 <li><router-link to="/app/contas"><font-awesome-icon icon="fa-solid fa-receipt" /> Contas corrente</router-link></li>
                  <li><router-link to="/app/cartoes"><font-awesome-icon icon="fa-solid fa-credit-card" /> Cartões</router-link></li>
+                 <li><router-link to="/app/poupanca"><font-awesome-icon icon="fa-solid fa-sack-dollar" /> Poupança/Investimento</router-link></li>
                  <li><a href="" @click.prevent="confirmAppExit"><font-awesome-icon icon="fa-solid fa-right-from-bracket" /> Sair</a></li>
                </ul>
            </nav>

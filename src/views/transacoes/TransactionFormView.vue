@@ -55,13 +55,14 @@
                                     </div>
                                     <div class="col-1" v-if="!data.disableInstallment">
                                       <label for="parcelas" class="form-label">Parcelas</label>
-                                      <input type="text" v-model="data.transaction.amount_installments" class="form-control" :disabled="data.selectStates.installmentDisable" id="parcelas" placeholder="Parcelas" aria-describedby="descriptionHelp">
+                                      <input type="text" v-model="data.transaction.amount_installments" class="form-control" :disabled="data.selectStates.installmentDisable" id="parcelas" placeholder="Parcelas">
                                     </div>
                                   </div>
 
                                  <div class="row">
                                     <div class="mb-3">
-                                        <button style="margin-right: 10px" @click="submit" type="button" class="btn btn-primary btn-primary-custom">Concluir</button>
+                                        <button style="margin-right: 10px" @click="submit(false)" type="button" class="btn btn-primary btn-primary-custom">Salvar</button>
+                                        <button style="margin-right: 10px" v-if="data.page.transactionId == null" @click="submit(true)" type="button" class="btn btn-primary btn-primary-custom">Salvar e continuar</button>
                                         <button type="button" @click="backPage" class="btn btn-secondary">Cancelar</button>
                                     </div>
                                  </div>
@@ -94,6 +95,9 @@ export default {
       const route = useRoute();
 
       const data = reactive({
+          page: {
+              transactionId: route.params.id
+          },
           pageTitle: "",
           subtitle: "",
           transactionTypes: [],
@@ -121,7 +125,7 @@ export default {
           router.push({name: "conta-transaction", params: {id: route.params.id}})
       }
 
-      const submit = () => {
+      const submit = (clearForm) => {
 
         let properties = Object.getOwnPropertyNames(data.transaction);
 
@@ -140,7 +144,7 @@ export default {
         }
 
       if(route.params.id_transaction == null) {
-         saveTransaction(store.getters.userData.user_id, route.params.id, data, router)
+         saveTransaction(store.getters.userData.user_id, route.params.id, data, router, clearForm)
          return;
        }
         updateTransaction(store.getters.userData.user_id, route.params.id, route.params.id_transaction, data, router)

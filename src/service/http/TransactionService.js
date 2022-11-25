@@ -57,7 +57,7 @@ const deleteTransaction = (userId, accountId, transactionId, data) => {
         showAlert('Falha ao deletar transação', 'error')
     })
 }
-const saveTransaction = (userId, accountId, data , router) => {
+const saveTransaction = (userId, accountId, data , router, clearForm) => {
     showLoading()
     let transaction = data.transaction
     if(transaction.installment === "false") {
@@ -66,8 +66,21 @@ const saveTransaction = (userId, accountId, data , router) => {
     }
     transaction.amount = transaction.amount * 100
     httpService.post(`/users/${userId}/accounts/${accountId}/transactions`, transaction).then(result => {
-        showAlert("Transação cadastrada com sucesso!", 'success').then(result => {
+        showAlert(!clearForm ? "Transação cadastrada com sucesso!"
+            : "Transação cadastrada com sucesso, Clique em OK para continuar",
+            'success').then(result => {
             if(result.isConfirmed) {
+                if(clearForm) {
+                  data.transaction.description = null;
+                  data.transaction.date = null;
+                  data.transaction.transaction_type = "";
+                  data.transaction.amount = null;
+                  data.transaction.transaction_category = "";
+                  data.categoryDisable = true
+                  data.transaction.installment = "false";
+                  data.transaction.amount_installments = null;
+                  return
+                }
                 router.push({name: "conta-transaction", params: {id: accountId}})
             }
         })
