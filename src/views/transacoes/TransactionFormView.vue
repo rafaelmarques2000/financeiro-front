@@ -34,7 +34,7 @@
 
                                     <div class="col-6">
                                         <label for="valor" class="form-label">Valor</label>
-                                        <CurrencyInput :options="{ currency: 'BRL' }" v-model="data.transaction.amount" class="form-control"></CurrencyInput>
+                                        <CurrencyInput :options="{ currency: 'BRL', precision: 2, autoDecimalDigits: true}" v-model="data.transaction.amount" class="form-control"></CurrencyInput>
                                     </div>
                                   </div>
 
