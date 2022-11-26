@@ -35,6 +35,15 @@
               </div>
           </div>
 
+          <div class="row">
+              <div class="col-12">
+                  <div class="card cards-content-chart">
+                      <h1 class="chart-content-title">Total de gastos</h1>
+                      <div id="barChart_1"></div>
+                  </div>
+              </div>
+          </div>
+
            <div class="row">
                 <div class="col-6">
                   <div class="card cards-content-chart">
@@ -72,7 +81,7 @@
 import {onMounted, reactive} from "vue";
 import pageTitle from "@/components/PageTitle";
 import store from "@/store";
-import {generateChartExpensePerCategory} from "@/service/statistic/Charts";
+import {generateBarInvoiceReport, generateChartExpensePerCategory} from "@/service/statistic/Charts";
 import {formatMoneyBRL} from "@/service/utils/helpers";
 import NoContent from "@/components/NoContent";
 
@@ -103,6 +112,7 @@ export default {
             end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
         }
         generateChartExpensePerCategory(data)
+        generateBarInvoiceReport(data)
       })
 
       return {
