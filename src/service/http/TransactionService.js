@@ -67,7 +67,7 @@ const saveTransaction = (userId, accountId, data , router, clearForm) => {
         delete transaction['installment']
         delete transaction['amount_installments']
     }
-    transaction.amount = transaction.amount * 100
+    transaction.amount = parseInt(String(transaction.amount).replace(".", "").replace(",", ""))
     httpService.post(`/users/${userId}/accounts/${accountId}/transactions`, transaction).then(result => {
         showAlert(!clearForm ? "Transação cadastrada com sucesso!"
             : "Transação cadastrada com sucesso, Clique em OK para continuar",
@@ -99,8 +99,7 @@ const updateTransaction = (userId, accountId, transactionId, data , router) => {
     let transaction = data.transaction
     delete transaction['installment']
     delete transaction['amount_installments']
-    transaction.amount = transaction.amount * 100
-
+    transaction.amount = parseInt(String(transaction.amount).replace(".", "").replace(",", ""))
     httpService.put(`/users/${userId}/accounts/${accountId}/transactions/${transactionId}`, transaction).then(result => {
         showAlert("Transação atualizada com sucesso!", 'success').then(result => {
             if(result.isConfirmed) {
