@@ -2,6 +2,8 @@ import httpService from "@/service/http/HttpService";
 import {showAlert, showLoading} from "@/service/utils/alertsService";
 import Swal from "sweetalert2";
 import {formatDate} from "@/service/utils/date";
+import {getAccountPeriodStatistic} from "@/service/http/accountStatisticService";
+import store from "@/store";
 
 const getAccountDetail = (userId, accountId, data) => {
     showLoading()
@@ -52,6 +54,7 @@ const deleteTransaction = (userId, accountId, transactionId, data) => {
     return httpService.delete(`/users/${userId}/accounts/${accountId}/transactions/${transactionId}`).then(result => {
         Swal.close()
         getAccountTransactions(userId,accountId,data)
+        getAccountPeriodStatistic(userId, accountId, data)
     }).catch(error => {
         Swal.close()
         showAlert('Falha ao deletar transação', 'error')
@@ -79,6 +82,7 @@ const saveTransaction = (userId, accountId, data , router, clearForm) => {
                   data.categoryDisable = true
                   data.transaction.installment = "false";
                   data.transaction.amount_installments = null;
+                  data.simulateInstallment = null
                   return
                 }
                 router.push({name: "conta-transaction", params: {id: accountId}})

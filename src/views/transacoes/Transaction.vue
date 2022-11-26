@@ -216,7 +216,6 @@ export default {
       }).then(result => {
         if(result.isConfirmed) {
           deleteTransaction(store.getters.userData.user_id,route.params.id, transactionId, data)
-          getAccountPeriodStatistic(store.getters.userData.user_id, route.params.id, data)
         }
       })
     }
