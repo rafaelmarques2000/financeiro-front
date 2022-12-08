@@ -21,7 +21,7 @@ const generateChartExpensePerCategory = async (data) => {
         },
         pie: {
             width: {
-                ratio: 0.3
+                ratio: 0.8
             }
         },
         tooltip: {
@@ -30,8 +30,12 @@ const generateChartExpensePerCategory = async (data) => {
             }
         },
         legend: {
-            show: true,
-            position: "right"
+            contents: {
+                bindto: "#chart-pie-legend",
+                template: function (title, color) {
+                    return "<span style='background-color:" + color + ";padding:5px'>" + title + "</span>";
+                }
+            }
         },
         bindto: "#bar-chart"
     }
@@ -48,9 +52,9 @@ const generateChartExpensePerCategory = async (data) => {
 }
 
 const generateBarInvoiceReport = async (data) => {
-
     let chartData = []
     let invoices = await getInvoiceReport(store.getters.userData.user_id, data)
+    data.dashboard.invoiceYearsData = invoices.data
     let formatObject = {}
     for (let i=0;i<invoices.data.length ;i++) {
         chartData.push([invoices.data[i].month, invoices.data[i].amount])
@@ -78,7 +82,12 @@ const generateBarInvoiceReport = async (data) => {
             show: false
         },
         legend: {
-            position: "right"
+            contents: {
+                bindto: "#chart-bar-legend",
+                template: function (title, color) {
+                    return "<span style='background-color:" + color + ";padding:5px'>" + title + "</span>";
+                }
+            }
         },
         bar: {
             padding: 20,
@@ -92,7 +101,11 @@ const generateBarInvoiceReport = async (data) => {
 
 
 
-    bb.generate(chartOptions);
+    let chart = bb.generate(chartOptions);
+    if(invoices.data.length === 0) {
+        data.dashboard.invoiceYearsData = null
+        chart.destroy()
+    }
 }
 
 export {

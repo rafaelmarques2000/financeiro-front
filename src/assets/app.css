@@ -124,7 +124,7 @@ body {
     background: #3735bb;
 }
 
-.active {
+.active-nav-menu {
     color:#fff!important;
     background: #4B49ACFF;
 }
@@ -270,4 +270,33 @@ body {
 }
 .slideback-leave-to {
     transform: translate(-100%, 0);
+}
+
+#tabdash {
+    background: #fff;
+    padding: 12px;
+}
+
+#chart-pie-legend {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    margin-right: 50px;
+    font-size: 0.8em;
+}
+
+#chart-pie-legend span {
+    margin-bottom: 5px;
+    border-radius: 10px;
+    padding: 8px!important;
+}
+
+#chart-bar-legend {
+    margin: 0 auto 33px;
+    color: #fff;
+}
+
+#chart-bar-legend span {
+    border-radius: 5px;
+    margin-right: 10px;
 }

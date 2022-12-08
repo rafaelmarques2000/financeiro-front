@@ -19,7 +19,7 @@ const getExpencePerCategory = async (userId, data) => {
 const getInvoiceReport = async (userId, data) => {
     try {
         showLoading()
-        let url = `/users/${userId}/dashboard/invoice-report?initial_date=${formatDate(data.filters.range.start)}&end_date=${formatDate(data.filters.range.end)}`
+        let url = `/users/${userId}/dashboard/invoice-report?competence_year=${data.filters.competenceYear}`
         let request = await httpService.get(url)
         hiddenLoading()
         return request;

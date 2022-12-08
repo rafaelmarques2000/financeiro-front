@@ -6,10 +6,10 @@
            </div>
            <nav class="sidebar-menu">
                <ul>
-                 <li><router-link to="/app/dashboard" :class="{'active': ReactiveData.page === 'dashboard'}"><font-awesome-icon icon="fa-solid fa-house" /> Inicio</router-link></li>
-                 <li><router-link to="/app/contas"    :class="{'active': ReactiveData.page === 'contas'}"><font-awesome-icon icon="fa-solid fa-receipt" /> Contas corrente</router-link></li>
-                 <li><router-link to="/app/cartoes"   :class="{'active': ReactiveData.page === 'cartoes'}"><font-awesome-icon icon="fa-solid fa-credit-card" /> Cartões</router-link></li>
-                 <li><router-link to="/app/poupanca"  :class="{'active': ReactiveData.page === 'poupanca'}"><font-awesome-icon icon="fa-solid fa-sack-dollar" /> Poupança/Investimento</router-link></li>
+                 <li><router-link to="/app/dashboard" :class="{'active-nav-menu': ReactiveData.page === 'dashboard'}"><font-awesome-icon icon="fa-solid fa-house" /> Inicio</router-link></li>
+                 <li><router-link to="/app/contas"    :class="{'active-nav-menu': ReactiveData.page === 'contas'}"><font-awesome-icon icon="fa-solid fa-receipt" /> Contas corrente</router-link></li>
+                 <li><router-link to="/app/cartoes"   :class="{'active-nav-menu': ReactiveData.page === 'cartoes'}"><font-awesome-icon icon="fa-solid fa-credit-card" /> Cartões</router-link></li>
+                 <li><router-link to="/app/poupanca"  :class="{'active-nav-menu': ReactiveData.page === 'poupanca'}"><font-awesome-icon icon="fa-solid fa-sack-dollar" /> Poupança/Investimento</router-link></li>
                  <li><a href="" @click.prevent="confirmAppExit"><font-awesome-icon icon="fa-solid fa-right-from-bracket" /> Sair</a></li>
                </ul>
            </nav>

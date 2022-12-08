@@ -19,7 +19,25 @@ const formatDate = (date) => {
     return `${year}-${month}-${day}`
 }
 
+const generateYears = (initial) => {
+    let initYear = initial
+    let currentYear = 2040
+    let lengthYear = (currentYear - initYear);
+    let count = lengthYear < 0 ? lengthYear * -1 : lengthYear
+    let yearList = [];
+    yearList.push(initYear)
+    for(let i=1; i <= count;i++) {
+        if(initYear > currentYear) {
+            yearList.push(initYear - i)
+        }else {
+            yearList.push(initYear + i)
+        }
+    }
+    return yearList
+}
+
 export {
     formatDateAndHour,
+    generateYears,
     formatDate
 }
