@@ -1,23 +1,25 @@
 <template>
   <div class="home-view">
-      <div class="sidebar">
-           <div class="logo">
-             <h1><font-awesome-icon icon="fa-solid fa-sack-dollar"></font-awesome-icon> Graninha 2.0</h1>
-           </div>
-           <nav class="sidebar-menu">
-               <ul>
-                 <li><router-link to="/app/dashboard" :class="{'active-nav-menu': ReactiveData.page === 'dashboard'}"><font-awesome-icon icon="fa-solid fa-house" /> Inicio</router-link></li>
-                 <li><router-link to="/app/contas"    :class="{'active-nav-menu': ReactiveData.page === 'contas'}"><font-awesome-icon icon="fa-solid fa-receipt" /> Contas corrente</router-link></li>
-                 <li><router-link to="/app/cartoes"   :class="{'active-nav-menu': ReactiveData.page === 'cartoes'}"><font-awesome-icon icon="fa-solid fa-credit-card" /> Cartões</router-link></li>
-                 <li><router-link to="/app/poupanca"  :class="{'active-nav-menu': ReactiveData.page === 'poupanca'}"><font-awesome-icon icon="fa-solid fa-sack-dollar" /> Poupança/Investimento</router-link></li>
-                 <li><a href="" @click.prevent="confirmAppExit"><font-awesome-icon icon="fa-solid fa-right-from-bracket" /> Sair</a></li>
-               </ul>
-           </nav>
-      </div>
     <div class="home-fluid">
          <nav class="home-navbar">
+           <div class="logo">
+             <h1><font-awesome-icon icon="fa-solid fa-sack-dollar"></font-awesome-icon> Graninha 3.0</h1>
+           </div>
 
-        </nav>
+           <nav class="sidebar-menu">
+             <ul>
+               <li><router-link to="/app/dashboard" :class="{'active-nav-menu': ReactiveData.page === 'dashboard'}"><font-awesome-icon icon="fa-solid fa-chart-line" /> Dash</router-link></li>
+               <li><router-link to="/app/contas"    :class="{'active-nav-menu': ReactiveData.page === 'contas'}"><font-awesome-icon icon="fa-solid fa-receipt" /> Contas</router-link></li>
+               <li><router-link to="/app/cartoes"   :class="{'active-nav-menu': ReactiveData.page === 'cartoes'}"><font-awesome-icon icon="fa-solid fa-credit-card" /> Cartões</router-link></li>
+               <li><router-link to="/app/poupanca"  :class="{'active-nav-menu': ReactiveData.page === 'poupanca'}"><font-awesome-icon icon="fa-solid fa-piggy-bank" /> Cofrinhos</router-link></li>
+             </ul>
+           </nav>
+
+           <div class="menu-nav-container">
+              <a href="" @click.prevent="confirmAppExit" class="btn btn-danger btn-exit"><font-awesome-icon icon="fa-solid fa-right-from-bracket" /> Sair</a>
+           </div>
+
+         </nav>
         <div class="content-center">
           <router-view v-slot="{ Component }">
             <transition name="slideback">
@@ -31,7 +33,6 @@
 
 <script>
 
-import {reactive} from "vue";
 import Swal from "sweetalert2";
 import store from "@/store"
 import {useRoute, useRouter} from "vue-router";
@@ -83,11 +84,8 @@ export default {
    }
 
    .logo {
-     width: 100%;
-     margin-top: 40px;
-     display: flex;
-     align-items: flex-end;
-     justify-content: left;
+     width: 200px;
+     margin-top: 11px;
      padding-left: 25px;
    }
 
@@ -95,20 +93,21 @@ export default {
      font-size: 1em;
      font-family: 'Roboto', sans-serif;
      font-weight: bold;
+     width: 120px;
    }
 
    .sidebar-menu ul {
        display: flex;
-       flex-direction: column;
-       margin-top: 30px;
-       padding-left: 10px;
+       flex-direction: row;
    }
 
-
-   .sidebar-menu ul li{
-       display: block;
-       margin-bottom: 10px;
+   .sidebar-menu ul li {
+     display: block;
+     overflow: hidden;
+     width: 150px;
+     text-align: center;
    }
+
 
    .sidebar-menu ul li a:link,.sidebar-menu ul li a:visited,.sidebar-menu ul li a:active{
       text-decoration: none;
@@ -137,7 +136,7 @@ export default {
       height: 60px;
       background: #ffffff;
       padding-left: 15px;
-      padding-top: 15px;
+      padding-top: 10px;
       box-sizing: border-box;
       color:#000;
       font-family: 'Roboto', sans-serif;
@@ -153,5 +152,16 @@ export default {
       width: 100%;
    }
 
+   .menu-nav-container {
+     width: 100%;
+     display: flex;
+     justify-content: flex-end;
+     box-sizing: border-box;
+   }
+
+   .btn-exit{
+     margin-bottom: 10px;
+     margin-right: 9px;
+   }
 
 </style>

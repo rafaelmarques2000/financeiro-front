@@ -34,7 +34,7 @@
         <div class="row">
           <div class="col-12">
             <div class="card cards-content-chart">
-              <h1 class="chart-content-title">Total Anual de gastos</h1>
+              <h1 class="chart-content-title">Resultado anual</h1>
               <no-content message="Não há dados no período" style="position: relative; top: 45%; bottom: 10px" v-if="data.dashboard.invoiceYearsData == null"></no-content>
               <div id="barChart_1"></div>
               <div id="chart-bar-legend"></div>
@@ -77,8 +77,8 @@
               <div class="chart-pie-content" style="justify-content: center; min-height: 300px; margin-bottom: 30px">
                 <no-content message="Não há dados no período" style="position: relative; top: 50%" v-if="data.dashboard.expensePerCategoryData == null"></no-content>
                 <div id="bar-chart"></div>
-                <div id="chart-pie-legend"></div>
               </div>
+              <div id="chart-pie-legend"></div>
             </div>
           </div>
 
