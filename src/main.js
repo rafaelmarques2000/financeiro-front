@@ -29,7 +29,7 @@ import {
     faArrowLeft,
     faArrowRight,
     faCreditCard,
-    faChartLine, faPiggyBank
+    faChartLine, faPiggyBank, faMoneyBill
 } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
@@ -48,7 +48,8 @@ library.add(
     faArrowRight,
     faCreditCard,
     faChartLine,
-    faPiggyBank
+    faPiggyBank,
+    faMoneyBill
 )
 
 import VCalendar from 'v-calendar';

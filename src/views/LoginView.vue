@@ -2,7 +2,7 @@
   <div class="login-view">
       <div class="login-form-content">
         <div class="logo-content">
-            <h1>Sistema de Finanças</h1>
+            <h1><font-awesome-icon icon="fa-solid fa-sack-dollar"/> Graninha 3.0</h1>
         </div>
 
         <h4 class="sub-title">Seja bem vindo, insira suas credencias para começar</h4>
@@ -22,6 +22,9 @@
             </form>
         </div>
       </div>
+      <div class="login-right-content">
+
+      </div>
   </div>
 </template>
 
@@ -31,7 +34,6 @@ import {onMounted, reactive} from "vue";
 import Swal from "sweetalert2";
 import {useRouter} from "vue-router";
 import store from "../store/index"
-import httpService from "@/service/http/HttpService";
 import {authenticate} from "@/service/http/authService";
 
 export default {
@@ -90,15 +92,24 @@ export default {
       width: 100%;
       height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
+   }
+
+   .login-right-content {
+     width: calc(100% - 400px);
+     background-image: url("../assets/img/pig.jpg");
+     background-position: center;
+     background-size: cover;
    }
 
    .login-form-content {
-       padding: 2.3em;
-       background: #fff;
-       width: 300px;
-       height: 350px;
+     padding: 2.3em;
+     background: #fff;
+     width: 500px;
+     height: 100vh;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     overflow: auto;
    }
 
    .logo-content {

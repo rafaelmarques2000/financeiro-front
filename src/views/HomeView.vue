@@ -11,6 +11,7 @@
                <li><router-link to="/app/dashboard" :class="{'active-nav-menu': ReactiveData.page === 'dashboard'}"><font-awesome-icon icon="fa-solid fa-chart-line" /> Dash</router-link></li>
                <li><router-link to="/app/contas"    :class="{'active-nav-menu': ReactiveData.page === 'contas'}"><font-awesome-icon icon="fa-solid fa-receipt" /> Contas</router-link></li>
                <li><router-link to="/app/cartoes"   :class="{'active-nav-menu': ReactiveData.page === 'cartoes'}"><font-awesome-icon icon="fa-solid fa-credit-card" /> Cartões</router-link></li>
+<!--               <li><router-link to="/app/cartoes"   :class="{'active-nav-menu': ReactiveData.page === 'cartoes'}"><font-awesome-icon icon="fa-solid fa-money-bill" /> Caixa</router-link></li>-->
                <li><router-link to="/app/poupanca"  :class="{'active-nav-menu': ReactiveData.page === 'poupanca'}"><font-awesome-icon icon="fa-solid fa-piggy-bank" /> Cofrinhos</router-link></li>
              </ul>
            </nav>
