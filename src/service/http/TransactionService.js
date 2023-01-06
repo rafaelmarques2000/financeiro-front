@@ -113,6 +113,16 @@ const updateTransaction = (userId, accountId, transactionId, data , router) => {
     })
 }
 
+const getTransactionByCategory = (userId, categoryId, data) =>{
+    showLoading()
+    httpService.get(`/users/${userId}/transactions/${categoryId}?initial_date=${formatDate(data.filters.range.start)}&end_date=${formatDate(data.filters.range.end)}`).then(result => {
+        Swal.close()
+        data.transactionList = result.data;
+    }).catch(error => {
+        Swal.close();
+        showAlert("Falha ao obter transações da categoria", 'error');
+    })
+}
 
 export {
     getAccountDetail,
@@ -120,5 +130,6 @@ export {
     getTransactionById,
     deleteTransaction,
     saveTransaction,
-    updateTransaction
+    updateTransaction,
+    getTransactionByCategory
 }
